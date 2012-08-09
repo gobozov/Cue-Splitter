@@ -18,6 +18,7 @@ public class CueFile {
     private String title;
     private String performer;
     private String cuePath;
+    private String cueDir;
     private String extention;
     private List<Track> tracks;
 
@@ -70,6 +71,14 @@ public class CueFile {
 
     public void setExtention(String extention) {
         this.extention = extention;
+    }
+
+    public String getCueDir() {
+        return cueDir;
+    }
+
+    public void setCueDir(String cueDir) {
+        this.cueDir = cueDir;
     }
 
     @Override

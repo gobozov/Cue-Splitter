@@ -28,22 +28,24 @@ public class CueSplitter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Track previousTrack = null;
-        for (Track t : cueFile.getTracks()) {
 
-            if (previousTrack != null) {
-                int startFrame = parser.secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
-                int endFrame = parser.secondsToFrames(t.getIndex().getPosition().getMinutes() * 60 + t.getIndex().getPosition().getSeconds(), cheapSoundFile);
-                cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
-            }
-            previousTrack = t;
-        }
-
-        if (previousTrack != null){
-            int startFrame = parser.secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
-            int endFrame = cheapSoundFile.getNumFrames();
-            cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
-        }
+        cheapSoundFile.WriteFile(getTrackFile(cueFile.getTracks().get(0), cueFile, targetDir), 0, 0);
+//        Track previousTrack = null;
+//        for (Track t : cueFile.getTracks()) {
+//
+//            if (previousTrack != null) {
+//                int startFrame = parser.secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
+//                int endFrame = parser.secondsToFrames(t.getIndex().getPosition().getMinutes() * 60 + t.getIndex().getPosition().getSeconds(), cheapSoundFile);
+//                cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
+//            }
+//            previousTrack = t;
+//        }
+//
+//        if (previousTrack != null){
+//            int startFrame = parser.secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
+//            int endFrame = cheapSoundFile.getNumFrames();
+//            cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
+//        }
 
     }
 
@@ -67,8 +69,11 @@ public class CueSplitter {
 
     private String lookupTargetFile(CueFile cueFile){
         String file = cueFile.getFile();
-        if (file == null)
+        if (file != null){
+            file = cueFile.getCueDir() + "/" + file;
+        } else {
             file = cueFile.getCuePath().replace("cue", cueFile.getExtention());
+        }
         return file;
     }
 

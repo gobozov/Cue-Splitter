@@ -22,7 +22,7 @@ package org.kc7bfi.jflac.metadata;
 
 import java.io.IOException;
 
-import javax.sound.sampled.AudioFormat;
+//import javax.sound.sampled.AudioFormat;
 
 import org.kc7bfi.jflac.io.BitInputStream;
 import org.kc7bfi.jflac.io.BitOutputStream;
@@ -224,9 +224,9 @@ public class StreamInfo extends Metadata {
     /**
      * @return the Java Sound AudioFormat for this stream info.
      */
-    public AudioFormat getAudioFormat() {
-        return new AudioFormat(sampleRate, bitsPerSample, channels, (bitsPerSample <= 8) ? false : true, false);
-    }
+//    public AudioFormat getAudioFormat() {
+//        return new AudioFormat(sampleRate, bitsPerSample, channels, (bitsPerSample <= 8) ? false : true, false);
+//    }
     
     /**
      * @return Returns the bitsPerSample.
