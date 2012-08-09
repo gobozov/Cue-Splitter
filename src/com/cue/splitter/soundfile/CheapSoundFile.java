@@ -60,7 +60,6 @@ public class CheapSoundFile {
             CheapAMR.getFactory(),
             CheapMP3.getFactory(),
             CheapWAV.getFactory(),
-            CheapFlac.getFactory(),
     };
 
     static ArrayList<String> sSupportedExtensions = new ArrayList<String>();

@@ -110,7 +110,7 @@ public class CueParser {
     public static void main(String[] args) throws IOException {
         CueParser parser = new CueParser();
         CueFile cueFile = null;
-        //cueFile = parser.parse(new File("C:\\temp\\01. Sunbird - Emitter (Promo) - 2011.cue"));
+        cueFile = parser.parse(new File("C:\\temp\\01. Sunbird - Emitter (Promo) - 2011.cue"));
        // System.out.println("cueFile = " + cueFile);
         //cueFile = parser.parse(new File("C:\\temp\\VA - Record Трансмиссия Vol 1 - Mixed by DJ Feel.cue"));
         // System.out.println("cueFile = " + cueFile);
@@ -118,7 +118,7 @@ public class CueParser {
         // System.out.println("cueFile = " + cueFile);
         //cueFile = parser.parse(new File("C:\\temp\\Various - DJ Anna Lee - 7 Days Of Love.cue"));
         //System.out.println("cueFile = " + cueFile);
-       cueFile = parser.parse(new File("C:\\temp\\7Б - Молодые ветра.flac.cue"));
+      // cueFile = parser.parse(new File("C:\\temp\\7Б - Молодые ветра.flac.cue"));
         System.out.println("cueFile = " + cueFile);
 
 
@@ -130,7 +130,6 @@ public class CueParser {
 
     public int secondsToFrames(double seconds, CheapSoundFile cheapSoundFile) {
         int secondsToFrames = (int) (1.0 * seconds * cheapSoundFile.getSampleRate() / cheapSoundFile.getSamplesPerFrame() + 0.5);
-        System.out.println("secondsToFrames = " + secondsToFrames);
         return secondsToFrames;
     }
 }
