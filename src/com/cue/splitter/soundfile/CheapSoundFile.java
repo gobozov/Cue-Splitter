@@ -20,18 +20,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+
 /**
  * CheapSoundFile is the parent class of several subclasses that each
  * do a "cheap" scan of various sound file formats, parsing as little
  * as possible in order to understand the high-level frame structure
  * and get a rough estimate of the volume level of each frame.  Each
  * subclass is able to:
- *  - open a sound file
- *  - return the sample rate and number of frames
- *  - return an approximation of the volume level of each frame
- *  - write a new sound file with a subset of the frames
- *
+ * - open a sound file
+ * - return the sample rate and number of frames
+ * - return an approximation of the volume level of each frame
+ * - write a new sound file with a subset of the frames
+ * <p/>
  * A frame should represent no less than 1 ms and no more than 100 ms of
  * audio.  This is compatible with the native frame sizes of most audio
  * file formats already, but if not, this class should expose virtual
@@ -49,19 +51,21 @@ public class CheapSoundFile {
 
     public interface Factory {
         public CheapSoundFile create();
+
         public String[] getSupportedExtensions();
     }
 
-    static Factory[] sSubclassFactories = new Factory[] {
-        CheapAAC.getFactory(),
-        CheapAMR.getFactory(),
-        CheapMP3.getFactory(),
-        CheapWAV.getFactory(),
+    static Factory[] sSubclassFactories = new Factory[]{
+            CheapAAC.getFactory(),
+            CheapAMR.getFactory(),
+            CheapMP3.getFactory(),
+            CheapWAV.getFactory(),
+            CheapFlac.getFactory(),
     };
 
     static ArrayList<String> sSupportedExtensions = new ArrayList<String>();
     static HashMap<String, Factory> sExtensionMap =
-        new HashMap<String, Factory>();
+            new HashMap<String, Factory>();
 
     static {
         for (Factory f : sSubclassFactories) {
@@ -72,16 +76,16 @@ public class CheapSoundFile {
         }
     }
 
-	/**
-	 * Static method to create the appropriate CheapSoundFile subclass
-	 * given a filename.
-	 *
-	 * TODO: make this more modular rather than hardcoding the logic
-	 */
+    /**
+     * Static method to create the appropriate CheapSoundFile subclass
+     * given a filename.
+     * <p/>
+     * TODO: make this more modular rather than hardcoding the logic
+     */
     public static CheapSoundFile create(String fileName,
                                         ProgressListener progressListener)
-        throws java.io.FileNotFoundException,
-               java.io.IOException {
+            throws java.io.FileNotFoundException,
+            java.io.IOException {
         File f = new File(fileName);
         if (!f.exists()) {
             throw new java.io.FileNotFoundException(fileName);
@@ -109,13 +113,13 @@ public class CheapSoundFile {
         return sExtensionMap.containsKey(components[components.length - 1]);
     }
 
-	/**
-	 * Return the filename extensions that are recognized by one of
-	 * our subclasses.
-	 */
+    /**
+     * Return the filename extensions that are recognized by one of
+     * our subclasses.
+     */
     public static String[] getSupportedExtensions() {
         return sSupportedExtensions.toArray(
-            new String[sSupportedExtensions.size()]);
+                new String[sSupportedExtensions.size()]);
     }
 
     protected ProgressListener mProgressListener = null;
@@ -125,8 +129,8 @@ public class CheapSoundFile {
     }
 
     public void ReadFile(File inputFile)
-        throws java.io.FileNotFoundException,
-               java.io.IOException {
+            throws java.io.FileNotFoundException,
+            java.io.IOException {
         mInputFile = inputFile;
     }
 
@@ -185,9 +189,10 @@ public class CheapSoundFile {
     }
 
     private static final char[] HEX_CHARS = {
-        '0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-    public static String bytesToHex (byte hash[]) {
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+    public static String bytesToHex(byte hash[]) {
         char buf[] = new char[hash.length * 2];
         for (int i = 0, x = 0; i < hash.length; i++) {
             buf[x++] = HEX_CHARS[(hash[i] >>> 4) & 0xf];
@@ -198,8 +203,8 @@ public class CheapSoundFile {
 
     public String computeMd5OfFirst10Frames()
             throws java.io.FileNotFoundException,
-                   java.io.IOException,
-                   java.security.NoSuchAlgorithmException {
+            java.io.IOException,
+            java.security.NoSuchAlgorithmException {
         int[] frameOffsets = getFrameOffsets();
         int[] frameLens = getFrameLens();
         int numFrames = frameLens.length;
@@ -227,7 +232,6 @@ public class CheapSoundFile {
         return bytesToHex(hash);
     }
 
-    public void WriteFile(File outputFile, int startFrame, int numFrames)
-            throws java.io.IOException {
+    public void WriteFile(File outputFile, int startFrame, int numFrames) throws java.io.IOException {
     }
 };

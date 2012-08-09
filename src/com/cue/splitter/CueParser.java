@@ -4,11 +4,9 @@ import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Index;
 import com.cue.splitter.data.Track;
 import com.cue.splitter.soundfile.CheapSoundFile;
-import com.cue.splitter.soundfile.CueSplitter;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,11 +19,11 @@ import java.util.List;
 public class CueParser {
 
 
-    private static String CUE_TITLE = "TITLE";
-    private static String CUE_PERFORMER = "PERFORMER";
-    private static String CUE_FILE = "FILE";
-    private static String CUE_TRACK = "TRACK";
-    private static String CUE_INDEX = "INDEX";
+    private static final String CUE_TITLE = "TITLE";
+    private static final String CUE_PERFORMER = "PERFORMER";
+    private static final String CUE_FILE = "FILE";
+    private static final String CUE_TRACK = "TRACK";
+    private static final String CUE_INDEX = "INDEX";
 
 
     public CueFile parse(InputStream stream, String filePath) {
@@ -111,12 +109,14 @@ public class CueParser {
         CueFile cueFile = null;
         //cueFile = parser.parse(new File("C:\\temp\\01. Sunbird - Emitter (Promo) - 2011.cue"));
         //System.out.println("cueFile = " + cueFile);
-        cueFile = parser.parse(new File("C:\\temp\\VA - Record Трансмиссия Vol 1 - Mixed by DJ Feel.cue"));
-         System.out.println("cueFile = " + cueFile);
+        //cueFile = parser.parse(new File("C:\\temp\\VA - Record Трансмиссия Vol 1 - Mixed by DJ Feel.cue"));
+        // System.out.println("cueFile = " + cueFile);
         // cueFile = parser.parse(new File("C:\\temp\\[VA] Hard Dance Mania Vol 13 Mixed by Pulsedriver.cue"));
         // System.out.println("cueFile = " + cueFile);
         //cueFile = parser.parse(new File("C:\\temp\\Various - DJ Anna Lee - 7 Days Of Love.cue"));
         //System.out.println("cueFile = " + cueFile);
+        cueFile = parser.parse(new File("C:\\temp\\7Б - Молодые ветра.flac.cue"));
+        System.out.println("cueFile = " + cueFile);
 
 //        String target = cueFile.getCuePath().replace("cue", cueFile.getExtention());
 //        CheapSoundFile cheapSoundFile = null;
