@@ -28,11 +28,13 @@ public class FileChooserDialog extends Dialog implements IFolderItemListener {
     private Context context;
     private Handler handler;
     private FolderLayout localFolders;
+    private boolean isFolderChooser;
 
-    public FileChooserDialog(Context context, Handler handler) {
+    public FileChooserDialog(Context context, Handler handler, boolean isFolderChooser) {
         super(context);
         this.context = context;
         this.handler = handler;
+        this.isFolderChooser = isFolderChooser;
     }
 
     @Override
@@ -41,6 +43,7 @@ public class FileChooserDialog extends Dialog implements IFolderItemListener {
         setContentView(R.layout.filechooser);
 
         localFolders = (FolderLayout) findViewById(R.id.localfolders);
+        localFolders.setFolderChooser(isFolderChooser);
         localFolders.setIFolderItemListener(this);
         localFolders.setDir(Environment.getExternalStorageDirectory().getAbsolutePath());
 

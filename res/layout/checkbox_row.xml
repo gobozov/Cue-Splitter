@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
-              android:padding="5dp"
+              android:padding="10dp"
         >
 
     <CheckBox android:id="@+id/checkbox"
@@ -12,10 +12,9 @@
               android:paddingRight="5dp"
               />
 
-    <TextView android:id="@+id/track_title"
+    <TextView android:id="@+id/text"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
-              android:textColor="@color/white"
-
+              android:textSize="18sp"
               />
 </LinearLayout>

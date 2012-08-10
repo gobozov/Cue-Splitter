@@ -2,7 +2,6 @@ package com.cue.splitter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import com.cue.splitter.util.CueParser;
 import com.cue.splitter.util.CueSplitter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -43,10 +41,17 @@ public class MainActivity extends SherlockActivity {
         trackList = (ListView) findViewById(R.id.track_list);
         font = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
 
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                File file = (File) msg.obj;
+                processCueFile(file);
+            }
+        };
+
     }
 
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-
         menu.add(0, 1, 1, R.string.menu_select_cue).setIcon(R.drawable.ic_collection).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menu.add(0, 2, 2, R.string.menu_cut_cue).setIcon(R.drawable.ic_cut).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return super.onCreateOptionsMenu(menu);
@@ -56,20 +61,15 @@ public class MainActivity extends SherlockActivity {
     public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-                handler = new Handler() {
 
-                    @Override
-                    public void handleMessage(Message msg) {
-                        File file = (File) msg.obj;
-                        processCueFile(file);
-                    }
-
-                };
-                FileChooserDialog d = new FileChooserDialog(MainActivity.this, handler);
-                d.setTitle(R.string.menu_select_cue);
-                d.show();
+                FileChooserDialog fileDialog = new FileChooserDialog(MainActivity.this, handler, false);
+                fileDialog.setTitle(R.string.menu_select_cue);
+                fileDialog.show();
+                break;
             case 2:
-
+                FileChooserDialog folderFialog = new FileChooserDialog(MainActivity.this, handler, true);
+                folderFialog.setTitle(R.string.select_folder);
+                folderFialog.show();
                 break;
 
         }
@@ -99,13 +99,13 @@ public class MainActivity extends SherlockActivity {
         @Override
         protected Object doInBackground(Object... objects) {
             CueSplitter splitter = new CueSplitter();
-            splitter.splitCue(adapter.cueFile, );
+            return null;
         }
 
 
         @Override
         protected void onPostExecute(Object o) {
-            super.onPostExecute(o);    //To change body of overridden methods use File | Settings | File Templates.
+
         }
     }
 
@@ -114,7 +114,7 @@ public class MainActivity extends SherlockActivity {
         try {
             CueFile cueFile = parser.parse(file);
             if (cueFile.getTracks() != null && !cueFile.getTracks().isEmpty()) {
-                adapter = new TrackAdapter(this, R.layout.track_row, cueFile.getTracks(), cueFile);
+                adapter = new TrackAdapter(this, R.layout.checkbox_row, cueFile.getTracks(), cueFile);
                 trackList.setAdapter(adapter);
                 text.setVisibility(View.GONE);
                 trackList.setVisibility(View.VISIBLE);
@@ -144,10 +144,10 @@ public class MainActivity extends SherlockActivity {
             final ViewHolder holder;
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = vi.inflate(R.layout.track_row, null);
+                convertView = vi.inflate(R.layout.checkbox_row, null);
                 holder = new ViewHolder();
                 holder.checkBox = (CheckBox) convertView.findViewById(R.id.checkbox);
-                holder.title = (TextView) convertView.findViewById(R.id.track_title);
+                holder.title = (TextView) convertView.findViewById(R.id.text);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
