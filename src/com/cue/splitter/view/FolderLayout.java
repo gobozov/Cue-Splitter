@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import com.cue.splitter.R;
 
@@ -26,7 +27,6 @@ public class FolderLayout extends LinearLayout implements AdapterView.OnItemClic
 
     public FolderLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         this.context = context;
 
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -50,8 +50,7 @@ public class FolderLayout extends LinearLayout implements AdapterView.OnItemClic
 
 
     private void getDir(String dirPath, ListView v) {
-
-        myPath.setText("Location: " + dirPath);
+        myPath.setText("Path : " + dirPath);
         item = new ArrayList<String>();
         path = new ArrayList<String>();
         File f = new File(dirPath);
@@ -88,9 +87,7 @@ public class FolderLayout extends LinearLayout implements AdapterView.OnItemClic
 
     //can manually set Item to display, if u want
     public void setItemList(List<String> item) {
-        ArrayAdapter<String> fileList = new ArrayAdapter<String>(context,
-                R.layout.row, item);
-
+        ArrayAdapter<String> fileList = new ArrayAdapter<String>(context, R.layout.row, item);
         lstView.setAdapter(fileList);
         lstView.setOnItemClickListener(this);
     }

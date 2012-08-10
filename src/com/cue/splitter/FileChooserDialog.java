@@ -1,9 +1,13 @@
 package com.cue.splitter;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.cue.splitter.view.FolderLayout;
 import com.cue.splitter.view.IFolderItemListener;
@@ -17,24 +21,28 @@ import java.io.File;
  * Time: 2:43
  * To change this template use File | Settings | File Templates.
  */
-public class FileChooserActivity extends SherlockActivity implements IFolderItemListener {
+public class FileChooserDialog extends Dialog implements IFolderItemListener {
 
-    FolderLayout localFolders;
+
+
+    private Context context;
+    private Handler handler;
+    private FolderLayout localFolders;
+
+    public FileChooserDialog(Context context, Handler handler) {
+        super(context);
+        this.context = context;
+        this.handler = handler;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filechooser);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-
         localFolders = (FolderLayout) findViewById(R.id.localfolders);
         localFolders.setIFolderItemListener(this);
         localFolders.setDir(Environment.getExternalStorageDirectory().getAbsolutePath());
-
-
 
     }
 
@@ -42,40 +50,24 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
     @Override
     public void OnCannotFileRead (File file){
         // TODO Auto-generated method stub
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(context)
                 .setIcon(R.drawable.icon)
-                .setTitle(
-                        "[" + file.getName()
-                                + "] folder can't be read!")
+                .setTitle("[" + file.getName() + "] folder can't be read!")
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-
+                            public void onClick(DialogInterface dialog, int which) {
 
                             }
                         }).show();
-
     }
-
 
     //Your stuff here for file Click
     @Override
-    public void OnFileClicked (File file){
-        // TODO Auto-generated method stub
-        new AlertDialog.Builder(this)
-                .setIcon(R.drawable.icon)
-                .setTitle("[" + file.getName() + "]")
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-
-
-                            }
-
-                        }).show();
+    public void OnFileClicked (final File file){
+        Message message = new Message();
+        message.obj = file;
+        handler.sendMessage(message);
+        FileChooserDialog.this.dismiss();
     }
 
 

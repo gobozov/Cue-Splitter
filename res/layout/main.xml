@@ -3,13 +3,13 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/tiled_background"
+    android:background="@drawable/gradient_background"
     >
 
-    <Button android:id="@+id/button_select"
+    <TextView android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select Cue"
+            android:text="Select Cue File"
             android:layout_centerInParent="true"/>
 
     <ListView android:id="@+id/track_list"

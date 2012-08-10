@@ -1,4 +1,4 @@
-package com.cue.splitter;
+package com.cue.splitter.util;
 
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Index;
@@ -26,56 +26,47 @@ public class CueParser {
     private static final String CUE_INDEX = "INDEX";
 
 
-    public CueFile parse(File file) throws FileNotFoundException {
+    public CueFile parse(File file) throws IOException {
         InputStream stream = new FileInputStream(file);
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(stream, "cp1251"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
         CueFile cueFile = new CueFile();
         cueFile.setCuePath(file.getAbsolutePath());
         cueFile.setCueDir(file.getParent());
-        try {
 
-            String line = trim(br.readLine());
-            boolean isTrack = false;
+        String line = trim(br.readLine());
+        boolean isTrack = false;
 
-            while (line != null) {
+        while (line != null) {
 
-                if (line.startsWith(CUE_TITLE) && !isTrack)
-                    cueFile.setTitle(line.replace(CUE_TITLE, "").trim());
+            if (line.startsWith(CUE_TITLE) && !isTrack)
+                cueFile.setTitle(line.replace(CUE_TITLE, "").trim());
 
-                if (line.startsWith(CUE_FILE) && !isTrack) {
-                    cueFile.setFile(replaceCueTypes(line.replace(CUE_FILE, "").trim()));
-                    cueFile.setExtention(getExtention(cueFile.getFile()));
-                }
-
-                if (line.startsWith(CUE_PERFORMER) && !isTrack)
-                    cueFile.setPerformer(line.replace(CUE_PERFORMER, "").trim());
-
-                if (line.startsWith(CUE_TRACK)) {
-                    isTrack = true;
-                    Track track = new Track();
-                    line = trim(br.readLine());
-                    while (line != null && !line.startsWith(CUE_TRACK)) {
-                        if (line.startsWith(CUE_TITLE))
-                            track.setTitle(line.replace(CUE_TITLE, "").trim());
-                        if (line.startsWith(CUE_PERFORMER))
-                            track.setPerformer(line.replace(CUE_PERFORMER, "").trim());
-                        if (line.startsWith(CUE_INDEX))
-                            track.setIndex(new Index(line.split("\\s")[1], line.split("\\s")[2]));
-                        line = trim(br.readLine());
-                    }
-                    cueFile.getTracks().add(track);
-                    continue;
-                }
-                line = trim(br.readLine());
-
+            if (line.startsWith(CUE_FILE) && !isTrack) {
+                cueFile.setFile(replaceCueTypes(line.replace(CUE_FILE, "").trim()));
+                cueFile.setExtention(getExtention(cueFile.getFile()));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            if (line.startsWith(CUE_PERFORMER) && !isTrack)
+                cueFile.setPerformer(line.replace(CUE_PERFORMER, "").trim());
+
+            if (line.startsWith(CUE_TRACK)) {
+                isTrack = true;
+                Track track = new Track();
+                line = trim(br.readLine());
+                while (line != null && !line.startsWith(CUE_TRACK)) {
+                    if (line.startsWith(CUE_TITLE))
+                        track.setTitle(line.replace(CUE_TITLE, "").trim());
+                    if (line.startsWith(CUE_PERFORMER))
+                        track.setPerformer(line.replace(CUE_PERFORMER, "").trim());
+                    if (line.startsWith(CUE_INDEX))
+                        track.setIndex(new Index(line.split("\\s")[1], line.split("\\s")[2]));
+                    line = trim(br.readLine());
+                }
+                cueFile.getTracks().add(track);
+                continue;
+            }
+            line = trim(br.readLine());
+
         }
         return cueFile;
 
@@ -102,7 +93,8 @@ public class CueParser {
 
     private String trim(String s) {
         if (s == null) return null;
-        return s.trim().replaceAll("\\u0000", "").replaceAll("\"", "");
+        // replace bad characters
+        return s.trim().replaceAll("\\u0000", "").replaceAll("\"", "").replaceAll("\'", "");
 
     }
 
@@ -111,14 +103,14 @@ public class CueParser {
         CueParser parser = new CueParser();
         CueFile cueFile = null;
         cueFile = parser.parse(new File("C:\\temp\\01. Sunbird - Emitter (Promo) - 2011.cue"));
-       // System.out.println("cueFile = " + cueFile);
+        // System.out.println("cueFile = " + cueFile);
         //cueFile = parser.parse(new File("C:\\temp\\VA - Record Трансмиссия Vol 1 - Mixed by DJ Feel.cue"));
         // System.out.println("cueFile = " + cueFile);
         // cueFile = parser.parse(new File("C:\\temp\\[VA] Hard Dance Mania Vol 13 Mixed by Pulsedriver.cue"));
         // System.out.println("cueFile = " + cueFile);
         //cueFile = parser.parse(new File("C:\\temp\\Various - DJ Anna Lee - 7 Days Of Love.cue"));
         //System.out.println("cueFile = " + cueFile);
-      // cueFile = parser.parse(new File("C:\\temp\\7Б - Молодые ветра.flac.cue"));
+        // cueFile = parser.parse(new File("C:\\temp\\7Б - Молодые ветра.flac.cue"));
         System.out.println("cueFile = " + cueFile);
 
 
@@ -128,8 +120,5 @@ public class CueParser {
 
     }
 
-    public int secondsToFrames(double seconds, CheapSoundFile cheapSoundFile) {
-        int secondsToFrames = (int) (1.0 * seconds * cheapSoundFile.getSampleRate() / cheapSoundFile.getSamplesPerFrame() + 0.5);
-        return secondsToFrames;
-    }
+
 }

@@ -12,6 +12,7 @@ public class Track {
     private String title;
     private String performer;
     private Index index;
+    private boolean isChecked = true;
 
     public Track() {
     }
@@ -47,6 +48,13 @@ public class Track {
         this.index = index;
     }
 
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
 
     @Override
     public String toString() {

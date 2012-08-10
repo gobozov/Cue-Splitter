@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CueSplitter</string>
+    <string name="app_name">Cue Splitter</string>
+    <string name="menu_select_cue">Select Cue File</string>
+    <string name="menu_cut_cue">Cut Cue</string>
+    <string name="splitting">Splitting...</string>
 </resources>

@@ -1,0 +1,37 @@
+<resources>
+    <color name="app_background">#fff4efef</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+
+    <color name="light_red">#ffd00000</color>
+    <color name="dark_red">#990000</color>
+    <color name="stripe_dark_red">#990000</color>
+    <color name="stripe_light_red">#B00000</color>
+
+
+    <color name="pink">#ffff3b63</color>
+
+    <color name="text_tab_selected">#ff010101</color>
+    <color name="text_tab_unselected">#ffffff</color>
+
+    <color name="dark_blue">#ff3333ff</color>
+    <color name="light_blue">#ff0087b5</color>
+    <color name="very_light_blue">#ff00ccff</color>
+    <color name="very_light_blue_2">#66ccff</color>
+
+
+    <color name="very_light_green">#ff33dd44</color>
+    <color name="dark_green">#ff0A8815</color>
+    <color name="light_green">#ff00cc33</color>
+
+
+    <color name="dark_gray">#ff666363</color>
+    <color name="light_dark_gray">#ffa7a0a0</color>
+    <color name="gray">#cdcdcd</color>
+    <color name="light_gray">#e5e5e5</color>
+
+
+    <color name="transparent">#00000000</color>
+
+
+</resources>
