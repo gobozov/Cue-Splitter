@@ -5,10 +5,9 @@
               android:layout_height="wrap_content"
         >
 
-    <CheckBox android:id="@+id/checkbox"
+    <RadioButton android:id="@+id/radiobutton"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:paddingRight="5dp"
               android:layout_marginLeft="10dp"
               />
 

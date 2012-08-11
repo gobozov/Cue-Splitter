@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.cue.splitter.R;
-import com.cue.splitter.data.CueFile;
-import com.cue.splitter.data.Track;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -17,17 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FolderLayout extends LinearLayout implements AdapterView.OnItemClickListener {
+public class FolderLayout extends LinearLayout {
 
     private Context context;
     private IFolderItemListener folderListener;
-    private List<String> item = null;
-    private List<String> path = null;
+    private List<String> items = null;
+    private List<PathWrapper> paths = null;
     private String root = "/";
     private TextView myPath;
     private ListView lstView;
     private boolean isFolderChooser;
     private Typeface font;
+    private String currentPath;
 
     public FolderLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,82 +52,75 @@ public class FolderLayout extends LinearLayout implements AdapterView.OnItemClic
         getDir(dirPath, lstView);
     }
 
+    public String getCurrentPath() {
+        return currentPath;
+    }
+
     public void setFolderChooser(boolean folderChooser) {
         isFolderChooser = folderChooser;
     }
 
+    FileFilter cueFolderFilter = new FileFilter() {
+        @Override
+        public boolean accept(File file) {
+            String fileName = file.getName();
+            if (file.isDirectory() || fileName.endsWith(".cue") || fileName.endsWith(".CUE"))
+                return true;
+            return false;
+        }
+    };
+
+    FileFilter folderFilter = new FileFilter() {
+        @Override
+        public boolean accept(File file) {
+            return file.isDirectory();
+        }
+    };
+
     private void getDir(String dirPath, ListView v) {
+        currentPath = dirPath;
         myPath.setText("Path : " + dirPath);
-        item = new ArrayList<String>();
-        path = new ArrayList<String>();
+        items = new ArrayList<String>();
+        paths = new ArrayList<PathWrapper>();
         File f = new File(dirPath);
-        File[] files = f.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                String fileName = file.getName();
-                if (file.isDirectory() || fileName.endsWith(".cue") || fileName.endsWith(".CUE"))
-                    return true;
-                return false;
-            }
-        });
+        File[] files = f.listFiles(isFolderChooser ? folderFilter : cueFolderFilter);
+        if (!f.getPath().equals(root)) {
 
-        if (!dirPath.equals(root)) {
-
-            //item.add(root);
-           // path.add(root);
-            item.add("../");
-            path.add(f.getParent());
+            items.add("../");
+            paths.add(new PathWrapper(f.getParent()));
 
         }
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
-            path.add(file.getPath());
+            paths.add(new PathWrapper(file.getPath()));
             if (file.isDirectory())
-                item.add(file.getName() + "/");
+                items.add(file.getName() + "/");
             else
-                item.add(file.getName());
+                items.add(file.getName());
 
         }
-        setItemList(item);
+        setItemList(items);
 
     }
 
     //can manually set Item to display, if u want
     public void setItemList(List<String> items) {
-        FolderAdapter adapter = new FolderAdapter(context, R.layout.checkbox_row, items, isFolderChooser);
+        FolderAdapter adapter = new FolderAdapter(context, R.layout.radiobutton_row, items, isFolderChooser);
         lstView.setAdapter(adapter);
-       // lstView.setOnItemClickListener(this);
     }
 
 
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        File file = new File(path.get(position));
-        if (file.isDirectory()) {
-            if (file.canRead())
-                getDir(path.get(position), l);
-            else {
-                //what to do when folder is unreadable
-                if (folderListener != null) {
-                    folderListener.OnCannotFileRead(file);
+    public static class PathWrapper {
 
-                }
+        String path;
+        boolean isChecked;
 
-            }
-        } else {
 
-            //what to do when file is clicked
-            //You can add more,like checking extension,and performing separate actions
-            if (folderListener != null) {
-                folderListener.OnFileClicked(file);
-            }
-
+        public PathWrapper(String path) {
+            this.path = path;
         }
     }
 
-    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        // TODO Auto-generated method stub
-        onListItemClick((ListView) arg0, arg0, arg2, arg3);
-    }
 
     public class FolderAdapter extends ArrayAdapter<String> {
 
@@ -149,14 +141,12 @@ public class FolderLayout extends LinearLayout implements AdapterView.OnItemClic
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
             final int pos = position;
+            final String text = items.get(position);
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = vi.inflate(R.layout.checkbox_row, null);
+                convertView = vi.inflate(R.layout.radiobutton_row, null);
                 holder = new ViewHolder();
-                holder.checkBox = (CheckBox) convertView.findViewById(R.id.checkbox);
-                if (!isFolderChooser) {
-                    holder.checkBox.setVisibility(View.GONE);
-                }
+                holder.radioButton = (RadioButton) convertView.findViewById(R.id.radiobutton);
                 holder.text = (TextView) convertView.findViewById(R.id.text);
                 convertView.setTag(holder);
             } else {
@@ -165,15 +155,16 @@ public class FolderLayout extends LinearLayout implements AdapterView.OnItemClic
 
 
             holder.text.setTypeface(font);
-            holder.text.setText(items.get(position));
+            holder.text.setText(text);
+            holder.radioButton.setVisibility((!isFolderChooser || text.equals("../")) ? View.GONE : View.VISIBLE);
 
             convertView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    File file = new File(path.get(pos));
+                    File file = new File(paths.get(pos).path);
                     if (file.isDirectory()) {
                         if (file.canRead())
-                            getDir(path.get(pos), lstView);
+                            getDir(paths.get(pos).path, lstView);
                         else {
                             //what to do when folder is unreadable
                             if (folderListener != null) {
@@ -194,11 +185,24 @@ public class FolderLayout extends LinearLayout implements AdapterView.OnItemClic
                 }
             });
 
+            holder.radioButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    for (PathWrapper p : paths)
+                        p.isChecked = false;
+                    File folder = new File(items.get(pos));
+                    paths.get(pos).isChecked = true;
+                    folderListener.OnFolderChecked(folder);
+                    notifyDataSetChanged();
+                }
+            });
+
+            holder.radioButton.setChecked(paths.get(position).isChecked);
             return convertView;
         }
 
         protected class ViewHolder {
-            protected CheckBox checkBox;
+            protected RadioButton radioButton;
             protected ImageView image;
             protected TextView text;
 

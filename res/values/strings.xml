@@ -3,7 +3,9 @@
     <string name="app_name">Cue Splitter</string>
     <string name="menu_select_cue">Select Cue File</string>
     <string name="menu_cut_cue">Cut Cue</string>
+    <string name="menu_new_folder">New Folder</string>
     <string name="splitting">Splitting...</string>
 
     <string name="select_folder">Select target folder</string>
+    <string name="done">Done</string>
 </resources>

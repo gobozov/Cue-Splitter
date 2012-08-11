@@ -1,0 +1,9 @@
+<resources>
+
+    <style name="Theme.Cue.Splitter" parent="Theme.Sherlock.ForceOverflow">
+        <item name="actionModeCloseDrawable">@drawable/ic_exit</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_exit</item>
+    </style>
+
+
+</resources>

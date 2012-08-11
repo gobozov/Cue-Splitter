@@ -64,6 +64,16 @@ public class FileChooserDialog extends Dialog implements IFolderItemListener {
                         }).show();
     }
 
+    @Override
+    public void OnCannotFileWrite(File file) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void OnFolderChecked(File file) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     //Your stuff here for file Click
     @Override
     public void OnFileClicked (final File file){
