@@ -136,6 +136,8 @@ public class MainActivity extends SherlockActivity {
         protected Boolean doInBackground(Object... objects) {
             CueSplitter splitter = new CueSplitter();
             String path = objects[0].toString();
+            if (!path.endsWith("/"))
+                path = path+"/";
             boolean result = splitter.splitCue(cueFile, path, progress);
             return result;
         }
