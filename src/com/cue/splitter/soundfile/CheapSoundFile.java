@@ -18,6 +18,7 @@ package com.cue.splitter.soundfile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,10 +82,7 @@ public class CheapSoundFile {
      * <p/>
      * TODO: make this more modular rather than hardcoding the logic
      */
-    public static CheapSoundFile create(String fileName,
-                                        ProgressListener progressListener)
-            throws java.io.FileNotFoundException,
-            java.io.IOException {
+    public static CheapSoundFile create(String fileName, ProgressListener progressListener) throws java.io.FileNotFoundException, IOException {
         File f = new File(fileName);
         if (!f.exists()) {
             throw new java.io.FileNotFoundException(fileName);

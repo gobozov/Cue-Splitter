@@ -18,8 +18,11 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
+import com.cue.splitter.exception.ReadSoundFileException;
 import com.cue.splitter.util.CueParser;
 import com.cue.splitter.util.CueSplitter;
+import com.cue.splitter.util.Settings;
+import com.cue.splitter.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,12 +34,11 @@ public class MainActivity extends SherlockActivity {
     public static final int REQUEST_FOLDER = 6;
     private static final String BUNDLE_IS_FOLDER_CHOOSER = "isFolderChooser";
     private static final String BUNDLE_CUE_FILE = "file";
-    private static final String BUNDLE_FOLDER= "folder";
+    private static final String BUNDLE_FOLDER = "folder";
 
 
     private ListView trackList;
     private TextView text;
-    private Handler handler;
     private Typeface font;
     private TrackAdapter adapter;
     private CueFile cueFile;
@@ -49,20 +51,12 @@ public class MainActivity extends SherlockActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 
-
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         text = (TextView) findViewById(R.id.text);
         trackList = (ListView) findViewById(R.id.track_list);
         font = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
 
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                File file = (File) msg.obj;
-                processCueFile(file);
-            }
-        };
 
     }
 
@@ -82,8 +76,14 @@ public class MainActivity extends SherlockActivity {
                 startActivityForResult(intent, REQUEST_CUE_FILE);
                 break;
             case 2:
-                intent.putExtra(BUNDLE_IS_FOLDER_CHOOSER, true);
-                startActivityForResult(intent, REQUEST_FOLDER);
+                if (Settings.getBoolean(this, Settings.PREF_DEFAULT_FOLDER_ENABLED)) {
+                    if (cueFile != null ) {
+                        new SplitCueTask(this).execute(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE));
+                    }
+                } else {
+                    intent.putExtra(BUNDLE_IS_FOLDER_CHOOSER, true);
+                    startActivityForResult(intent, REQUEST_FOLDER);
+                }
                 break;
             case 3:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -102,7 +102,7 @@ public class MainActivity extends SherlockActivity {
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_FOLDER) {
             String target = data.getExtras().getString(BUNDLE_FOLDER);
-            if (cueFile != null && target != null ) {
+            if (cueFile != null && target != null) {
                 new SplitCueTask(this).execute(target);
             }
         }
@@ -142,8 +142,15 @@ public class MainActivity extends SherlockActivity {
             CueSplitter splitter = new CueSplitter();
             String path = objects[0].toString();
             if (!path.endsWith("/"))
-                path = path+"/";
-            boolean result = splitter.splitCue(cueFile, path, progress);
+                path = path + "/";
+            boolean result = false;
+            try {
+                result = splitter.splitCue(cueFile, path, progress);
+            } catch (ReadSoundFileException e) {
+                Utils.showMessageDialog(MainActivity.this, R.string.smth_wrong, R.string.cant_read_sound_file);
+            } catch (IOException e) {
+                Utils.showMessageDialog(MainActivity.this, R.string.smth_wrong, R.string.cant_write_sound_file);
+            }
             return result;
         }
 

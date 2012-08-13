@@ -1,5 +1,8 @@
 package com.cue.splitter.util;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Environment;
 
 /**
@@ -22,6 +25,22 @@ public class Utils {
         } else {
             return false;
         }
+    }
+
+
+    public static void showMessageDialog(Context context, int dialogTitle, int message){
+        final AlertDialog alert;
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(dialogTitle)
+                .setMessage(message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        alert = builder.create();
+        alert.show();
     }
 
 

@@ -2,8 +2,7 @@ package com.cue.splitter.util;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import com.cue.splitter.util.CueParser;
+import com.cue.splitter.exception.ReadSoundFileException;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
 import com.cue.splitter.soundfile.CheapSoundFile;
@@ -22,44 +21,42 @@ import java.util.Arrays;
 public class CueSplitter {
     private static final char[] ILLEGAL_NAME_CHARACTERS = {'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'};
 
-    public boolean splitCue(CueFile cueFile, String targetDir, Handler handler) {
+    public boolean splitCue(CueFile cueFile, String targetDir, Handler handler) throws ReadSoundFileException, IOException {
+        String target = lookupTargetFile(cueFile);
+        CheapSoundFile cheapSoundFile = null;
         try {
-            String target = lookupTargetFile(cueFile);
-            CheapSoundFile cheapSoundFile = null;
             cheapSoundFile = CheapSoundFile.create(target, null);
+        } catch (IOException e) {
+            throw new ReadSoundFileException();
+        }
 
-            Track previousTrack = null;
-            int count = 0;
-            for (Track t : cueFile.getTracks()) {
 
-                if (previousTrack != null) {
-                    int startFrame = secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
-                    int endFrame = secondsToFrames(t.getIndex().getPosition().getMinutes() * 60 + t.getIndex().getPosition().getSeconds(), cheapSoundFile);
-                    cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
-                    // handler for progress
-                    if (handler != null) {
-                        Message message = new Message();
-                        message.arg1 = ++count;
-                        handler.handleMessage(message);
-                    }
-                }
-                previousTrack = t;
-            }
-
+        Track previousTrack = null;
+        int count = 0;
+        for (Track t : cueFile.getTracks()) {
             if (previousTrack != null) {
                 int startFrame = secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
-                int endFrame = cheapSoundFile.getNumFrames();
+                int endFrame = secondsToFrames(t.getIndex().getPosition().getMinutes() * 60 + t.getIndex().getPosition().getSeconds(), cheapSoundFile);
                 cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
+                // handler for progress
+                if (handler != null) {
+                    Message message = new Message();
+                    message.arg1 = ++count;
+                    handler.handleMessage(message);
+                }
             }
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-
+            previousTrack = t;
         }
-        return false;
+
+        if (previousTrack != null) {
+            int startFrame = secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
+            int endFrame = cheapSoundFile.getNumFrames();
+            cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
+        }
+        return true;
     }
 
-    public boolean splitCue(CueFile cueFile, String targetDir) {
+    public boolean splitCue(CueFile cueFile, String targetDir)  throws ReadSoundFileException, IOException{
         return splitCue(cueFile, targetDir, null);
     }
 

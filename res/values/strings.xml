@@ -25,4 +25,11 @@
     <string name="pref_default_folder_is_enabled">Enable default folder</string>
     <string name="pref_default_folder_value">Select default folder</string>
 
+
+    <string name="smth_wrong">Something wrong!</string>
+    <string name="cant_read_sound_file">Can not lookup or read source file</string>
+    <string name="cant_write_sound_file">Can not write files</string>
+
+
+
 </resources>
