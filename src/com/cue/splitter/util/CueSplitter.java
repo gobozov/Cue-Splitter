@@ -1,5 +1,7 @@
 package com.cue.splitter.util;
 
+import android.os.Handler;
+import android.os.Message;
 import com.cue.splitter.util.CueParser;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
@@ -19,19 +21,26 @@ import java.util.Arrays;
 public class CueSplitter {
     private static final char[] ILLEGAL_NAME_CHARACTERS = {'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'};
 
-    public boolean splitCue(CueFile cueFile, String targetDir) {
+    public boolean splitCue(CueFile cueFile, String targetDir, Handler handler) {
         try {
             String target = lookupTargetFile(cueFile);
             CheapSoundFile cheapSoundFile = null;
             cheapSoundFile = CheapSoundFile.create(target, null);
 
             Track previousTrack = null;
+            int count = 0;
             for (Track t : cueFile.getTracks()) {
 
                 if (previousTrack != null) {
                     int startFrame = secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
                     int endFrame = secondsToFrames(t.getIndex().getPosition().getMinutes() * 60 + t.getIndex().getPosition().getSeconds(), cheapSoundFile);
                     cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
+                    // handler for progress
+                    if (handler != null) {
+                        Message message = new Message();
+                        message.arg1 = count;
+                        handler.handleMessage(message);
+                    }
                 }
                 previousTrack = t;
             }
@@ -47,6 +56,10 @@ public class CueSplitter {
 
         }
         return false;
+    }
+
+    public boolean splitCue(CueFile cueFile, String targetDir) {
+        return splitCue(cueFile, targetDir, null);
     }
 
     private File getTrackFile(Track track, CueFile cueFile, String targetDir) {

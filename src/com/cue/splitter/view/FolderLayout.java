@@ -190,7 +190,7 @@ public class FolderLayout extends LinearLayout {
                 public void onClick(View view) {
                     for (PathWrapper p : paths)
                         p.isChecked = false;
-                    File folder = new File(items.get(pos));
+                    File folder = new File(paths.get(pos).path);
                     paths.get(pos).isChecked = true;
                     folderListener.OnFolderChecked(folder);
                     notifyDataSetChanged();

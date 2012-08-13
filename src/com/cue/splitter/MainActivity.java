@@ -25,14 +25,20 @@ import java.util.List;
 
 public class MainActivity extends SherlockActivity {
 
+    public static final int REQUEST_CUE_FILE = 5;
+    public static final int REQUEST_FOLDER = 6;
+    private static final String BUNDLE_IS_FOLDER_CHOOSER = "isFolderChooser";
+    private static final String BUNDLE_CUE_FILE = "file";
+    private static final String BUNDLE_FOLDER= "folder";
+
+
     private ListView trackList;
     private TextView text;
     private Handler handler;
     private Typeface font;
     private TrackAdapter adapter;
+    private CueFile cueFile;
 
-    public static int REQUEST_CUE_FILE = 5;
-    public static int REQUEST_FOLDER = 6;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +64,7 @@ public class MainActivity extends SherlockActivity {
     public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
         menu.add(0, 1, 1, R.string.menu_select_cue).setIcon(R.drawable.ic_collection).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menu.add(0, 2, 2, R.string.menu_cut_cue).setIcon(R.drawable.ic_cut).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add(0, 3, 3, R.string.menu_cut_settings).setIcon(R.drawable.ic_action_settings).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -66,19 +73,14 @@ public class MainActivity extends SherlockActivity {
         Intent intent = new Intent(MainActivity.this, FileChooserActivity.class);
         switch (item.getItemId()) {
             case 1:
-                intent.putExtra("isFolderChooser", false);
+                intent.putExtra(BUNDLE_IS_FOLDER_CHOOSER, false);
                 startActivityForResult(intent, REQUEST_CUE_FILE);
-//                FileChooserDialog fileDialog = new FileChooserDialog(MainActivity.this, handler, false);
-//                fileDialog.setTitle(R.string.menu_select_cue);
-//                fileDialog.show();
                 break;
             case 2:
-
-                intent.putExtra("isFolderChooser", true);
+                intent.putExtra(BUNDLE_IS_FOLDER_CHOOSER, true);
                 startActivityForResult(intent, REQUEST_FOLDER);
-//                FileChooserDialog folderFialog = new FileChooserDialog(MainActivity.this, handler, true);
-//                folderFialog.setTitle(R.string.select_folder);
-//                folderFialog.show();
+                break;
+            case 3:
                 break;
 
         }
@@ -89,22 +91,36 @@ public class MainActivity extends SherlockActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_CUE_FILE) {
-            File file = (File) data.getExtras().get("file");
+            File file = (File) data.getExtras().get(BUNDLE_CUE_FILE);
             processCueFile(file);
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_FOLDER) {
-            Toast.makeText(this, ((File) data.getExtras().get("file")).getName(), Toast.LENGTH_SHORT).show();
+            String target = data.getExtras().getString(BUNDLE_FOLDER);
+            if (cueFile != null && target != null ) {
+                new SplitCueTask(this).execute(target);
+                //Toast.makeText(this, ((File) data.getExtras().get(BUNDLE_FOLDER)).getName(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    private class SplitCueTask extends AsyncTask {
+    private class SplitCueTask extends AsyncTask<Object, Integer, Boolean> {
 
         private Context context;
         private ProgressDialog dialog;
+        private Handler progress;
 
-        private SplitCueTask(Context context) {
+        public SplitCueTask(Context context) {
             this.context = context;
             this.dialog = new ProgressDialog(context);
+            this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            this.dialog.setMax(cueFile.getTracks().size());
+            progress = new Handler() {
+
+                @Override
+                public void handleMessage(Message msg) {
+                    publishProgress(msg.arg1);
+                }
+            };
         }
 
 
@@ -117,28 +133,36 @@ public class MainActivity extends SherlockActivity {
 
 
         @Override
-        protected Object doInBackground(Object... objects) {
+        protected Boolean doInBackground(Object... objects) {
             CueSplitter splitter = new CueSplitter();
-            return null;
+            String path = objects[0].toString();
+            boolean result = splitter.splitCue(cueFile, path, progress);
+            return result;
         }
 
 
         @Override
-        protected void onPostExecute(Object o) {
+        protected void onPostExecute(Boolean o) {
 
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            dialog.setProgress(values[0]);
         }
     }
 
     private void processCueFile(File file) {
         CueParser parser = new CueParser();
         try {
-            CueFile cueFile = parser.parse(file);
-            if (cueFile.getTracks() != null && !cueFile.getTracks().isEmpty()) {
-                adapter = new TrackAdapter(this, R.layout.checkbox_row, cueFile.getTracks(), cueFile);
+            CueFile cue = parser.parse(file);
+            if (cue.getTracks() != null && !cue.getTracks().isEmpty()) {
+                adapter = new TrackAdapter(this, R.layout.checkbox_row, cue.getTracks(), cue);
                 trackList.setAdapter(adapter);
                 text.setVisibility(View.GONE);
                 trackList.setVisibility(View.VISIBLE);
             }
+            cueFile = cue;
         } catch (IOException e) {
             e.printStackTrace();
         }

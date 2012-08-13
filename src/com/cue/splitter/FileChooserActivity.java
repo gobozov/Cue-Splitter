@@ -5,17 +5,25 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.cue.splitter.util.Utils;
 import com.cue.splitter.view.FolderLayout;
 import com.cue.splitter.view.IFolderItemListener;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,7 +53,7 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
         localFolders = (FolderLayout) findViewById(R.id.localfolders);
         localFolders.setFolderChooser(isFolderChooser);
         localFolders.setIFolderItemListener(this);
-        localFolders.setDir(Environment.getExternalStorageDirectory().getAbsolutePath());
+        localFolders.setDir(Utils.isSdAvailable() ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/");
 
     }
 
@@ -61,9 +69,20 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
     public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-
-                String path = localFolders.getCurrentPath();
-
+                final String parent = localFolders.getCurrentPath();
+                Handler handler = new Handler(){
+                    @Override
+                    public void handleMessage(Message msg) {
+                        Boolean result = (Boolean) msg.obj;
+                        if (!result)
+                            Toast.makeText(FileChooserActivity.this, R.string.cant_create_folder, Toast.LENGTH_SHORT).show();
+                        else
+                            localFolders.setDir(parent);
+                    }
+                };
+                CreateFolderDialog dialog = new CreateFolderDialog(FileChooserActivity.this, handler, parent);
+                dialog.setTitle(R.string.create_new_folder);
+                dialog.show();
                 break;
         }
         return true;
@@ -72,7 +91,6 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
     //Your stuff here for Cannot open Folder
     @Override
     public void OnCannotFileRead(File file) {
-        // TODO Auto-generated method stub
         new AlertDialog.Builder(this)
                 .setIcon(R.drawable.icon)
                 .setTitle("[" + file.getName() + "] folder can't be read!")
@@ -108,7 +126,7 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
     public void OnFolderChecked(File file) {
         FileChooserActionMode actionMode = null;
         if (mMode == null){
-             actionMode = new FileChooserActionMode();
+             actionMode = new FileChooserActionMode(file);
              mMode = startActionMode(actionMode);
         }
         if (actionMode !=null){
@@ -119,6 +137,10 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
     private final class FileChooserActionMode implements com.actionbarsherlock.view.ActionMode.Callback {
 
         private File file;
+
+        private FileChooserActionMode(File file) {
+            this.file = file;
+        }
 
         @Override
         public boolean onCreateActionMode(com.actionbarsherlock.view.ActionMode mode, com.actionbarsherlock.view.Menu menu) {
@@ -136,7 +158,10 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
         public boolean onActionItemClicked(com.actionbarsherlock.view.ActionMode mode, com.actionbarsherlock.view.MenuItem item) {
             switch (item.getItemId()) {
                 case 1:
-                    Toast.makeText(FileChooserActivity.this, "File = " + file.getName(), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.putExtra("folder", file.getAbsolutePath());
+                    setResult(RESULT_OK, intent);
+                    finish();
                     break;
             }
             mMode.finish();
