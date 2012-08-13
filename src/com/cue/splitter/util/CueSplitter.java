@@ -2,6 +2,7 @@ package com.cue.splitter.util;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import com.cue.splitter.util.CueParser;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
@@ -38,7 +39,7 @@ public class CueSplitter {
                     // handler for progress
                     if (handler != null) {
                         Message message = new Message();
-                        message.arg1 = count;
+                        message.arg1 = ++count;
                         handler.handleMessage(message);
                     }
                 }

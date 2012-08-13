@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +46,9 @@ public class MainActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -81,6 +86,7 @@ public class MainActivity extends SherlockActivity {
                 startActivityForResult(intent, REQUEST_FOLDER);
                 break;
             case 3:
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
 
         }
@@ -98,7 +104,6 @@ public class MainActivity extends SherlockActivity {
             String target = data.getExtras().getString(BUNDLE_FOLDER);
             if (cueFile != null && target != null ) {
                 new SplitCueTask(this).execute(target);
-                //Toast.makeText(this, ((File) data.getExtras().get(BUNDLE_FOLDER)).getName(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -145,7 +150,8 @@ public class MainActivity extends SherlockActivity {
 
         @Override
         protected void onPostExecute(Boolean o) {
-
+            if (dialog.isShowing())
+                dialog.dismiss();
         }
 
         @Override

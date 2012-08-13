@@ -16,5 +16,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".FileChooserActivity"/>
+        <activity android:name=".SettingsActivity"/>
     </application>
 </manifest> 

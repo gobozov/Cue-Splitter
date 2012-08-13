@@ -9,10 +9,20 @@
 
     <string name="splitting">Splitting...</string>
 
+    <string name="folder_cannot_read">Folder can not be read!</string>
+
     <string name="select_folder">Select target folder</string>
     <string name="done">Done</string>
 
     <string name="create_new_folder">Create new folder</string>
     <string name="input_folder_name">Input new folder name</string>
     <string name="cant_create_folder">Can not create folder</string>
+
+
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="pref_default_folder">Default folder settings</string>
+    <string name="pref_default_folder_is_enabled">Enable default folder</string>
+    <string name="pref_default_folder_value">Select default folder</string>
+
 </resources>
