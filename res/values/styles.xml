@@ -6,4 +6,11 @@
     </style>
 
 
+    <style name="LightCheckbox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:background">@android:drawable/checkbox_on_background</item>
+        <item name="android:button">@android:drawable/checkbox_off_background</item>
+
+    </style>
+
+
 </resources>

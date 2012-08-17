@@ -38,8 +38,8 @@ public class FolderLayout extends LinearLayout {
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.folderview, this);
 
-        myPath = (TextView) findViewById(R.id.path);
-        lstView = (ListView) findViewById(R.id.list);
+        myPath = (TextView) view.findViewById(R.id.path);
+        lstView = (ListView) view.findViewById(R.id.list);
 
         getDir(root, lstView);
 
@@ -149,6 +149,7 @@ public class FolderLayout extends LinearLayout {
                 convertView = vi.inflate(R.layout.radiobutton_row, null);
                 holder = new ViewHolder();
                 holder.radioButton = (RadioButton) convertView.findViewById(R.id.radiobutton);
+                holder.image = (ImageView) convertView.findViewById(R.id.image);
                 holder.text = (TextView) convertView.findViewById(R.id.text);
                 convertView.setTag(holder);
             } else {
@@ -159,6 +160,16 @@ public class FolderLayout extends LinearLayout {
             holder.text.setTypeface(font);
             holder.text.setText(text);
             holder.radioButton.setVisibility((!isFolderChooser || text.equals("../")) ? View.GONE : View.VISIBLE);
+
+            if (!isFolderChooser){
+                holder.image.setVisibility(View.VISIBLE);
+                if (text.endsWith(".cue") || text.endsWith(".CUE"))
+                    holder.image.setBackgroundResource(R.drawable.ic_cue);
+                else
+                    holder.image.setBackgroundResource(R.drawable.ic_folder);
+            }
+
+
 
             convertView.setOnClickListener(new OnClickListener() {
                 @Override
