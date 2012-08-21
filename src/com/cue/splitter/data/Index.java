@@ -9,7 +9,7 @@ package com.cue.splitter.data;
  */
 public class Index {
 
-    private int number = -1;
+    private int number;
     private Position position = null;
 
 

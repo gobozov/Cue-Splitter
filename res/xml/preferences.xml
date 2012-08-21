@@ -15,8 +15,18 @@
                 android:summary="/"
                 android:title="@string/pref_default_folder_value"
                 android:dependency="default_folder_key"
-            />
+                />
+
 
     </android.preference.PreferenceCategory>
 
+
+    <android.preference.PreferenceCategory android:title="@string/pref_id3_tags_settings">
+        <CheckBoxPreference
+                android:key="use_id3_tags_key"
+                android:defaultValue="true"
+                android:title="@string/pref_use_id3_tags"
+                />
+
+    </android.preference.PreferenceCategory>
 </PreferenceScreen>

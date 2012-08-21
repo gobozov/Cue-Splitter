@@ -23,9 +23,13 @@
 
     <string name="on">On</string>
     <string name="off">Off</string>
+
     <string name="pref_default_folder">Default folder settings</string>
     <string name="pref_default_folder_is_enabled">Enable default folder</string>
     <string name="pref_default_folder_value">Select default folder</string>
+
+    <string name="pref_id3_tags_settings">ID3 tags settings</string>
+    <string name="pref_use_id3_tags">Use ID3 tags</string>
 
 
     <string name="smth_wrong">Something wrong!</string>

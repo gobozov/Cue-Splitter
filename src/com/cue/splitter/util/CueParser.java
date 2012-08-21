@@ -53,6 +53,9 @@ public class CueParser {
             if (line.startsWith(CUE_TRACK)) {
                 isTrack = true;
                 Track track = new Track();
+                try{
+                    track.setPosition(Integer.parseInt(line.split("\\s")[1]));
+                }catch (ArrayIndexOutOfBoundsException e){}
                 line = trim(br.readLine());
                 while (line != null && !line.startsWith(CUE_TRACK)) {
                     if (line.startsWith(CUE_TITLE))
@@ -115,13 +118,13 @@ public class CueParser {
         //System.out.println("cueFile = " + cueFile);
 
 
-        CueSplitter splitter = new CueSplitter();
-        try {
-            CheapSoundFile soundFile = splitter.readTargetFile(cueFile, null);
-            splitter.splitCue(soundFile, cueFile, "c:/temp/", null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        CueSplitter splitter = new CueSplitter();
+//        try {
+//            CheapSoundFile soundFile = splitter.readTargetFile(cueFile, null);
+//            splitter.splitCue(soundFile, cueFile, "c:/temp/", null);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 
     }

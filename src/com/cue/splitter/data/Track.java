@@ -9,6 +9,7 @@ package com.cue.splitter.data;
  */
 public class Track {
 
+    private int position;
     private String title;
     private String performer;
     private Index index;
@@ -17,12 +18,13 @@ public class Track {
     public Track() {
     }
 
-    public Track(String title, String performer, Index index) {
-        this.title = title;
-        this.performer = performer;
-        this.index = index;
+    public int getPosition() {
+        return position;
     }
 
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public String getTitle() {
         return title;

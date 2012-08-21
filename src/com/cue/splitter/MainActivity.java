@@ -140,7 +140,7 @@ public class MainActivity extends SherlockActivity {
 
         @Override
         protected CheapSoundFile doInBackground(Object... objects) {
-            CueSplitter splitter = new CueSplitter();
+            CueSplitter splitter = new CueSplitter(MainActivity.this);
             path = objects[0].toString();
             if (!path.endsWith("/"))
                 path = path + "/";
@@ -196,7 +196,7 @@ public class MainActivity extends SherlockActivity {
 
         @Override
         protected Boolean doInBackground(Object... objects) {
-            CueSplitter splitter = new CueSplitter();
+            CueSplitter splitter = new CueSplitter(MainActivity.this);
             CheapSoundFile cheapSoundFile = (CheapSoundFile) objects[0];
             String path = objects[1].toString();
             if (!path.endsWith("/"))

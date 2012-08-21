@@ -15,6 +15,7 @@ public class Settings {
 
     public static final String PREF_DEFAULT_FOLDER_ENABLED = "default_folder_key";
     public static final String PREF_DEFAULT_FOLDER_VALUE = "default_folder_value_key";
+    public static final String PREF_USE_ID3_TAGS = "use_id3_tags_key";
 
 
     public static SharedPreferences getPreferences(Context context) {

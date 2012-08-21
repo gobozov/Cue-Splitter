@@ -18,17 +18,19 @@ import com.cue.splitter.view.CustomPreferenceDialog;
  * Time: 16:30
  * To change this template use File | Settings | File Templates.
  */
-public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener  {
+public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
     private CheckBoxPreference isDefaultFolderEnabled;
     private CustomPreferenceDialog defaultFolderValue;
+    private CheckBoxPreference useID3Tags;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        isDefaultFolderEnabled = (CheckBoxPreference)  getPreferenceScreen().findPreference(Settings.PREF_DEFAULT_FOLDER_ENABLED);
+        isDefaultFolderEnabled = (CheckBoxPreference) getPreferenceScreen().findPreference(Settings.PREF_DEFAULT_FOLDER_ENABLED);
         defaultFolderValue = (CustomPreferenceDialog) getPreferenceScreen().findPreference(Settings.PREF_DEFAULT_FOLDER_VALUE);
+        useID3Tags = (CheckBoxPreference) getPreferenceScreen().findPreference(Settings.PREF_USE_ID3_TAGS);
 
 
     }
@@ -40,6 +42,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         String off = getRString(R.string.off);
         isDefaultFolderEnabled.setSummary(Settings.getBoolean(this, Settings.PREF_DEFAULT_FOLDER_ENABLED) ? on : off);
         defaultFolderValue.setSummary(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE));
+        useID3Tags.setSummary(Settings.getBoolean(this, Settings.PREF_USE_ID3_TAGS) ? on : off);
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -52,15 +55,17 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         String on = getRString(R.string.on);
         String off = getRString(R.string.off);
 
-        if (key.equals(Settings.PREF_DEFAULT_FOLDER_ENABLED)){
+        if (key.equals(Settings.PREF_DEFAULT_FOLDER_ENABLED))
             isDefaultFolderEnabled.setSummary(Settings.getBoolean(this, key) ? on : off);
-        } else if(key.equals(Settings.PREF_DEFAULT_FOLDER_VALUE)){
+
+        if (key.equals(Settings.PREF_USE_ID3_TAGS))
+            useID3Tags.setSummary(Settings.getBoolean(this, key) ? on : off);
+
+        if (key.equals(Settings.PREF_DEFAULT_FOLDER_VALUE)) {
             defaultFolderValue.setSummary(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE));
         }
 
     }
-
-
 
 
 }
