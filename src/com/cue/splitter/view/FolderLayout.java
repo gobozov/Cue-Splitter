@@ -199,10 +199,19 @@ public class FolderLayout extends LinearLayout {
                 public void onClick(View view) {
                     for (PathWrapper p : paths)
                         p.isChecked = false;
-                    File folder = new File(paths.get(pos).path);
-                    paths.get(pos).isChecked = true;
-                    folderListener.OnFolderChecked(folder);
                     notifyDataSetChanged();
+                    File folder = new File(paths.get(pos).path);
+                    if (folder.canRead()) {
+                        paths.get(pos).isChecked = true;
+                        folderListener.OnFolderChecked(folder);
+                        notifyDataSetChanged();
+                    } else {
+                        //what to do when folder is unreadable
+                        if (folderListener != null) {
+                            folderListener.OnCannotFileRead(folder);
+                        }
+
+                    }
                 }
             });
 

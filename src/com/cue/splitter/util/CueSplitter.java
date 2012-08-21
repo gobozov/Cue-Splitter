@@ -6,7 +6,9 @@ import android.util.Log;
 import com.cue.splitter.exception.ReadSoundFileException;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
+import com.cue.splitter.soundfile.CheapMP3;
 import com.cue.splitter.soundfile.CheapSoundFile;
+import com.mpatric.mp3agic.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,11 +31,14 @@ public class CueSplitter {
         cheapSoundFile = CheapSoundFile.create(target, new CheapSoundFile.ProgressListener() {
             @Override
             public boolean reportProgress(double fractionComplete) {
-                Message message = new Message();
-                message.arg1 = ((int) (fractionComplete * 100));
-                handler.handleMessage(message);
+                if (handler != null) {
+                    Message message = new Message();
+                    message.arg1 = ((int) (fractionComplete * 100));
+                    handler.handleMessage(message);
+                }
                 return true;
             }
+
         });
 
         return cheapSoundFile;
@@ -46,7 +51,34 @@ public class CueSplitter {
             if (previousTrack != null) {
                 int startFrame = secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
                 int endFrame = secondsToFrames(t.getIndex().getPosition().getMinutes() * 60 + t.getIndex().getPosition().getSeconds(), cheapSoundFile);
-                cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
+                File targetFile = getTrackFile(previousTrack, cueFile, targetDir);
+                cheapSoundFile.WriteFile(targetFile, startFrame, endFrame - startFrame);
+                // set ID3 Tags
+                if (cheapSoundFile instanceof CheapMP3) {
+                    try {
+                        Mp3File mp3file = new Mp3File(targetFile.getAbsolutePath());
+                        ID3v1 id3v1Tag = new ID3v1Tag();
+                        ID3v2 id3v2Tag = new ID3v24Tag();
+                        mp3file.setId3v1Tag(id3v1Tag);
+                        mp3file.setId3v2Tag(id3v2Tag);
+                        //id3v1Tag.setTrack("5");
+                        String performer = t.getPerformer() == null ? cueFile.getPerformer() : t.getPerformer();
+                        String title = t.getTitle();
+                        id3v1Tag.setArtist(performer);
+                        id3v1Tag.setTitle(title);
+                        id3v2Tag.setArtist(performer);
+                        id3v2Tag.setTitle(title);
+                        mp3file.save(targetFile.getAbsolutePath());
+                    } catch (UnsupportedTagException e) {
+                        e.printStackTrace();
+                    } catch (InvalidDataException e) {
+                        e.printStackTrace();
+                    } catch (NotSupportedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
                 // handler for progress
                 if (handler != null) {
                     Message message = new Message();

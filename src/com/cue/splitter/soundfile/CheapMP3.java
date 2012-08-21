@@ -309,6 +309,7 @@ public class CheapMP3 extends CheapSoundFile {
         }
         in.close();
         out.close();
+
     }
 
     static private int BITRATES_MPEG1_L3[] = {
