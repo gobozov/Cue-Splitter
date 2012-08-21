@@ -161,14 +161,10 @@ public class FolderLayout extends LinearLayout {
             holder.text.setText(text);
             holder.radioButton.setVisibility((!isFolderChooser || text.equals("../")) ? View.GONE : View.VISIBLE);
 
-            if (!isFolderChooser){
-                holder.image.setVisibility(View.VISIBLE);
-                if (text.endsWith(".cue") || text.endsWith(".CUE"))
-                    holder.image.setBackgroundResource(R.drawable.ic_cue);
-                else
-                    holder.image.setBackgroundResource(R.drawable.ic_folder);
-            }
-
+            if (text.endsWith(".cue") || text.endsWith(".CUE"))
+                holder.image.setBackgroundResource(R.drawable.ic_cue);
+            else
+                holder.image.setBackgroundResource(R.drawable.ic_folder);
 
 
             convertView.setOnClickListener(new OnClickListener() {

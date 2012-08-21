@@ -3,19 +3,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
+              android:padding="15dp"
         >
 
     <RadioButton android:id="@+id/radiobutton"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginLeft="5dp"
               />
 
     <ImageView android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:id="@+id/image"
-               android:paddingLeft="5dp"
-               android:src="@drawable/ic_folder"
                android:layout_gravity="center_vertical"
             />
 
@@ -24,6 +22,7 @@
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:textSize="15sp"
-              android:padding="15dp"
+              android:paddingLeft="5dp"
+              android:layout_gravity="center_vertical"
               />
 </LinearLayout>

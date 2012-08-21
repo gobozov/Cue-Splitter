@@ -2,6 +2,7 @@ package com.cue.splitter.util;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import com.cue.splitter.exception.ReadSoundFileException;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
@@ -21,18 +22,26 @@ import java.util.Arrays;
 public class CueSplitter {
     private static final char[] ILLEGAL_NAME_CHARACTERS = {'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'};
 
-    public boolean splitCue(CueFile cueFile, String targetDir, Handler handler) throws ReadSoundFileException, IOException {
+    public CheapSoundFile readTargetFile(CueFile cueFile, final Handler handler) throws IOException {
         String target = lookupTargetFile(cueFile);
         CheapSoundFile cheapSoundFile = null;
-        try {
-            cheapSoundFile = CheapSoundFile.create(target, null);
-        } catch (IOException e) {
-            throw new ReadSoundFileException();
-        }
 
+        cheapSoundFile = CheapSoundFile.create(target, new CheapSoundFile.ProgressListener() {
+            @Override
+            public boolean reportProgress(double fractionComplete) {
+                Message message = new Message();
+                message.arg1 = ((int) (fractionComplete * 100));
+                handler.handleMessage(message);
+                return true;
+            }
+        });
 
-        Track previousTrack = null;
+        return cheapSoundFile;
+    }
+
+    public boolean splitCue(CheapSoundFile cheapSoundFile, CueFile cueFile, String targetDir, final Handler handler) throws IOException {
         int count = 0;
+        Track previousTrack = null;
         for (Track t : cueFile.getTracks()) {
             if (previousTrack != null) {
                 int startFrame = secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
@@ -54,10 +63,6 @@ public class CueSplitter {
             cheapSoundFile.WriteFile(getTrackFile(previousTrack, cueFile, targetDir), startFrame, endFrame - startFrame);
         }
         return true;
-    }
-
-    public boolean splitCue(CueFile cueFile, String targetDir)  throws ReadSoundFileException, IOException{
-        return splitCue(cueFile, targetDir, null);
     }
 
     private File getTrackFile(Track track, CueFile cueFile, String targetDir) {

@@ -112,15 +112,15 @@ public class CueParser {
         //cueFile = parser.parse(new File("C:\\temp\\Various - DJ Anna Lee - 7 Days Of Love.cue"));
         //System.out.println("cueFile = " + cueFile);
         // cueFile = parser.parse(new File("C:\\temp\\7Б - Молодые ветра.flac.cue"));
-        System.out.println("cueFile = " + cueFile);
+        //System.out.println("cueFile = " + cueFile);
 
 
-        CueSplitter splitter = new CueSplitter();
-        try {
-            splitter.splitCue(cueFile, "c:/temp/");
-        } catch (ReadSoundFileException e) {
-            e.printStackTrace();
-        }
+//        CueSplitter splitter = new CueSplitter();
+//        try {
+//            splitter.splitCue(cueFile, "c:/temp/");
+//        } catch (ReadSoundFileException e) {
+//            e.printStackTrace();
+//        }
 
 
     }

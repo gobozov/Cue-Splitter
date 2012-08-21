@@ -8,6 +8,8 @@
     <string name="menu_new_folder">New Folder</string>
 
     <string name="splitting">Splitting...</string>
+    <string name="reading">Reading...</string>
+    <string name="choose_cue_file">Choose cue file for splitting.</string>
 
     <string name="folder_cannot_read">Folder can not be read!</string>
 
