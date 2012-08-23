@@ -41,8 +41,12 @@ public class CustomPreferenceDialog extends DialogPreference implements IFolderI
         folderLayout.setFolderChooser(true);
         folderLayout.setIFolderItemListener(this);
         folderLayout.setDir(Utils.isSdAvailable() ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/");
+        view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         return view;
+
     }
+
+
 
     @Override
     protected void onBindDialogView(View view) {
@@ -58,16 +62,11 @@ public class CustomPreferenceDialog extends DialogPreference implements IFolderI
 
     }
 
-
     @Override
     public void OnCannotFileRead(File file) {
         Toast.makeText(context, R.string.folder_cannot_read, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void OnCannotFileWrite(File file) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     @Override
     public void OnFileClicked(File file) {

@@ -9,7 +9,7 @@
 
     <string name="splitting">Splitting...</string>
     <string name="reading">Reading...</string>
-    <string name="choose_cue_file">Choose cue file for splitting.</string>
+    <string name="choose_cue_file">Select cue file for split</string>
 
     <string name="folder_cannot_read">Folder can not be read!</string>
 
@@ -34,10 +34,7 @@
 
     <string name="smth_wrong">Something wrong!</string>
     <string name="cant_read_sound_file">Can not lookup or read source file</string>
-    <string name="cant_write_sound_file">Can not write files</string>
-
-
-    <string name="root">\u002F</string>
+    <string name="cant_write_sound_file">Can not write files to selected directory</string>
 
 
 

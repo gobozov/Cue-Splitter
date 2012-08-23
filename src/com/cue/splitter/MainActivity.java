@@ -19,6 +19,7 @@ import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
 import com.cue.splitter.exception.ReadSoundFileException;
 import com.cue.splitter.soundfile.CheapSoundFile;
+import com.cue.splitter.tasks.ReadFileTask;
 import com.cue.splitter.util.CueParser;
 import com.cue.splitter.util.CueSplitter;
 import com.cue.splitter.util.Settings;
@@ -82,7 +83,7 @@ public class MainActivity extends SherlockActivity {
                 }
                 if (Settings.getBoolean(this, Settings.PREF_DEFAULT_FOLDER_ENABLED)) {
                     if (cueFile != null) {
-                        new ReadFileTask(this).execute(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE, "/"));
+                        new ReadFileTask(this, cueFile).execute(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE, "/"));
                     }
                 } else {
                     intent.putExtra(BUNDLE_IS_FOLDER_CHOOSER, true);
@@ -107,121 +108,12 @@ public class MainActivity extends SherlockActivity {
         if (resultCode == RESULT_OK && requestCode == REQUEST_FOLDER) {
             String target = data.getExtras().getString(BUNDLE_FOLDER);
             if (cueFile != null && target != null) {
-                new ReadFileTask(this).execute(target);
+                new ReadFileTask(this, cueFile).execute(target);
             }
         }
     }
 
 
-    private class ReadFileTask extends AsyncTask<Object, Integer, CheapSoundFile> {
-
-        private ProgressDialog readDialog;
-        private Handler progress;
-        private String path;
-
-        public ReadFileTask(Context context) {
-            this.readDialog = new ProgressDialog(context);
-            this.readDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            this.readDialog.setCancelable(false);
-
-            progress = new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    publishProgress(msg.arg1);
-                }
-            };
-        }
-        @Override
-        protected void onPreExecute() {
-            this.readDialog.setMessage(getResources().getString(R.string.reading));
-            this.readDialog.show();
-        }
-
-
-        @Override
-        protected CheapSoundFile doInBackground(Object... objects) {
-            CueSplitter splitter = new CueSplitter(MainActivity.this);
-            path = objects[0].toString();
-            if (!path.endsWith("/"))
-                path = path + "/";
-            try {
-                CheapSoundFile cheapSoundFile = splitter.readTargetFile(cueFile, progress);
-                return cheapSoundFile;
-            } catch (IOException e) {
-                Utils.showMessageDialog(MainActivity.this, R.string.smth_wrong, R.string.cant_read_sound_file);
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(CheapSoundFile file) {
-            if (readDialog.isShowing())
-                readDialog.dismiss();
-            new SplitCueTask(MainActivity.this).execute(file, path);
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            readDialog.setProgress(values[0]);
-        }
-    }
-
-
-    private class SplitCueTask extends AsyncTask<Object, Integer, Boolean> {
-
-        private ProgressDialog splitDialog;
-        private Handler progress;
-
-        public SplitCueTask(Context context) {
-            this.splitDialog = new ProgressDialog(context);
-            this.splitDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            this.splitDialog.setCancelable(false);
-            this.splitDialog.setMax(cueFile.getTracks().size());
-
-            progress = new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    publishProgress(msg.arg1);
-                }
-            };
-        }
-
-        @Override
-        protected void onPreExecute() {
-            this.splitDialog.setMessage(getResources().getString(R.string.splitting));
-            this.splitDialog.show();
-
-        }
-
-        @Override
-        protected Boolean doInBackground(Object... objects) {
-            CueSplitter splitter = new CueSplitter(MainActivity.this);
-            CheapSoundFile cheapSoundFile = (CheapSoundFile) objects[0];
-            String path = objects[1].toString();
-            if (!path.endsWith("/"))
-                path = path + "/";
-            boolean result = false;
-            try {
-                result = splitter.splitCue(cheapSoundFile, cueFile, path, progress);
-            } catch (IOException e) {
-                Utils.showMessageDialog(MainActivity.this, R.string.smth_wrong, R.string.cant_write_sound_file);
-            }
-            return result;
-        }
-
-
-        @Override
-        protected void onPostExecute(Boolean o) {
-            if (splitDialog.isShowing())
-                splitDialog.dismiss();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-                splitDialog.setProgress(values[0]);
-        }
-    }
 
     private void processCueFile(File file) {
         CueParser parser = new CueParser();

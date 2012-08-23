@@ -101,17 +101,17 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
                 }).show();
     }
 
-    @Override
-    public void OnCannotFileWrite(File file) {
-        new AlertDialog.Builder(this)
-                .setIcon(R.drawable.icon)
-                .setTitle("You can't write to [" + file.getName() + "]!")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
-    }
+//    @Override
+//    public void OnCannotFileWrite(File file) {
+//        new AlertDialog.Builder(this)
+//                .setIcon(R.drawable.icon)
+//                .setTitle("You can't write to [" + file.getName() + "]!")
+//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                    }
+//                }).show();
+//    }
 
     //Your stuff here for file Click
     @Override

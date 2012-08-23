@@ -45,6 +45,15 @@ public class CueFile {
         return tracks;
     }
 
+    public List<Track> getCheckedTracks(){
+        List<Track> checked =  new LinkedList<Track>();
+          for (Track t: getTracks()){
+              if  (t.isChecked())
+                  checked.add(t);
+          }
+        return checked;
+    }
+
     public void setTracks(List<Track> tracks) {
         this.tracks = tracks;
     }

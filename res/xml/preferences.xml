@@ -9,18 +9,23 @@
                 android:title="@string/pref_default_folder_is_enabled"
                 />
 
-        <com.cue.splitter.view.CustomPreferenceDialog
-                android:key="default_folder_value_key"
-                android:defaultValue="@string/root"
-                android:title="@string/pref_default_folder_value"
-                android:dependency="default_folder_key"
-                />
+        <!--<com.cue.splitter.view.CustomPreferenceDialog-->
+                <!--android:key="default_folder_value_key"-->
+                <!--android:defaultValue="/"-->
+                <!--android:title="@string/pref_default_folder_value"-->
+                <!--android:dependency="default_folder_key"-->
+                <!--/>-->
 
+        <Preference  android:key="default_folder_value_key"
+                     android:title="@string/pref_default_folder_value"
+                     android:dependency="default_folder_key"
+                />
 
     </android.preference.PreferenceCategory>
 
 
     <android.preference.PreferenceCategory android:title="@string/pref_id3_tags_settings">
+
         <CheckBoxPreference
                 android:key="use_id3_tags_key"
                 android:defaultValue="true"
