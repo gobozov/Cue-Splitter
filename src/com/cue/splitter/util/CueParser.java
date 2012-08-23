@@ -118,7 +118,7 @@ public class CueParser {
         //System.out.println("cueFile = " + cueFile);
 
 
-//        CueSplitter splitter = new CueSplitter();
+//        CueSplitter splitter = new CueSplitter(null);
 //        try {
 //            CheapSoundFile soundFile = splitter.readTargetFile(cueFile, null);
 //            splitter.splitCue(soundFile, cueFile, "c:/temp/", null);

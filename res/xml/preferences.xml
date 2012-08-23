@@ -11,8 +11,7 @@
 
         <com.cue.splitter.view.CustomPreferenceDialog
                 android:key="default_folder_value_key"
-                android:defaultValue="/"
-                android:summary="/"
+                android:defaultValue="@string/root"
                 android:title="@string/pref_default_folder_value"
                 android:dependency="default_folder_key"
                 />

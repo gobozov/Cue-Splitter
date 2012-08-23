@@ -37,5 +37,8 @@
     <string name="cant_write_sound_file">Can not write files</string>
 
 
+    <string name="root">\u002F</string>
+
+
 
 </resources>

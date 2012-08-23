@@ -22,8 +22,8 @@ public class Settings {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static String getString(Context context, String name) {
-        return getPreferences(context).getString(name, "");
+    public static String getString(Context context, String name, String defaultValue) {
+        return getPreferences(context).getString(name, defaultValue);
     }
 
     public static void setString(Context context,String key, String value) {

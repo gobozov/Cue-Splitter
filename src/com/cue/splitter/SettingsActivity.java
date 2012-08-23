@@ -41,7 +41,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         String on = getRString(R.string.on);
         String off = getRString(R.string.off);
         isDefaultFolderEnabled.setSummary(Settings.getBoolean(this, Settings.PREF_DEFAULT_FOLDER_ENABLED) ? on : off);
-        defaultFolderValue.setSummary(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE));
+        defaultFolderValue.setSummary(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE, "/"));
         useID3Tags.setSummary(Settings.getBoolean(this, Settings.PREF_USE_ID3_TAGS) ? on : off);
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
@@ -62,7 +62,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
             useID3Tags.setSummary(Settings.getBoolean(this, key) ? on : off);
 
         if (key.equals(Settings.PREF_DEFAULT_FOLDER_VALUE)) {
-            defaultFolderValue.setSummary(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE));
+            defaultFolderValue.setSummary(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE, "/"));
         }
 
     }

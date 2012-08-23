@@ -82,7 +82,7 @@ public class MainActivity extends SherlockActivity {
                 }
                 if (Settings.getBoolean(this, Settings.PREF_DEFAULT_FOLDER_ENABLED)) {
                     if (cueFile != null) {
-                        new ReadFileTask(this).execute(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE));
+                        new ReadFileTask(this).execute(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE, "/"));
                     }
                 } else {
                     intent.putExtra(BUNDLE_IS_FOLDER_CHOOSER, true);
