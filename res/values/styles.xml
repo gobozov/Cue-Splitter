@@ -1,10 +1,21 @@
 <resources>
 
-    <style name="Theme.Cue.Splitter" parent="Theme.Sherlock.ForceOverflow">
+    <style name="Cue.Splitter.Theme" parent="Theme.Sherlock.ForceOverflow">
+        <item name="actionBarStyle">@style/Cue.Splitter.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Cue.Splitter.ActionBar</item>
         <item name="actionModeCloseDrawable">@drawable/ic_exit</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_exit</item>
     </style>
 
+
+    <style name="Cue.Splitter.ActionBar" parent="Widget.Sherlock.ActionBar">
+        <!--<item name="android:background">@drawable/gradient_background</item>-->
+        <!--<item name="background">@drawable/gradient_background</item>-->
+        <item name="android:background">@color/dark_gray</item>
+        <item name="background">@color/dark_gray</item>
+        <!--<item name="android:background">@drawable/tiled_background</item>-->
+        <!--<item name="background">@drawable/tiled_background</item>-->
+    </style>
 
     <style name="LightCheckbox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:background">@android:drawable/checkbox_on_background</item>
