@@ -9,17 +9,12 @@
 
 
     <style name="Cue.Splitter.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <!--<item name="android:background">@drawable/gradient_background</item>-->
-        <!--<item name="background">@drawable/gradient_background</item>-->
         <item name="android:background">@color/dark_gray</item>
         <item name="background">@color/dark_gray</item>
-        <!--<item name="android:background">@drawable/tiled_background</item>-->
-        <!--<item name="background">@drawable/tiled_background</item>-->
     </style>
 
     <style name="LightCheckbox" parent="@android:style/Widget.CompoundButton.CheckBox">
-        <item name="android:background">@android:drawable/checkbox_on_background</item>
-        <item name="android:button">@android:drawable/checkbox_off_background</item>
+        <item name="android:button">@drawable/checkboxes</item>
 
     </style>
 

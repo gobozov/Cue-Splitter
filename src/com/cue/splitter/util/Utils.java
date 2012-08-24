@@ -27,18 +27,23 @@ public class Utils {
         }
     }
 
+    public static void showMessageDialog(Context context, int dialogTitle){
+        showMessageDialog(context, dialogTitle, -1);
+    }
+
 
     public static void showMessageDialog(Context context, int dialogTitle, int message){
         final AlertDialog alert;
         AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
-                .setMessage(message)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
+                if (message != -1)
+                    builder.setMessage(message);
         alert = builder.create();
         alert.show();
     }

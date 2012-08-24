@@ -37,5 +37,8 @@
     <string name="cant_write_sound_file">Can not write files to selected directory</string>
 
 
+    <string name="splitting_done">Splitting is done!</string>
+
+
 
 </resources>
