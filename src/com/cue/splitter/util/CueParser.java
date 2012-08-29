@@ -28,7 +28,7 @@ public class CueParser {
 
     public CueFile parse(File file) throws IOException {
         InputStream stream = new FileInputStream(file);
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream, "cp1251"));
         CueFile cueFile = new CueFile();
         cueFile.setCuePath(file.getAbsolutePath());
         cueFile.setCueDir(file.getParent());
