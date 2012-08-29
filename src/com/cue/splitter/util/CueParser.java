@@ -3,6 +3,7 @@ package com.cue.splitter.util;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Index;
 import com.cue.splitter.data.Track;
+import com.cue.splitter.soundfile.CheapSoundFile;
 
 import java.io.*;
 import java.util.Arrays;
@@ -116,13 +117,13 @@ public class CueParser {
         //System.out.println("cueFile = " + cueFile);
 
 
-//        CueSplitter splitter = new CueSplitter();
-//        try {
-//            CheapSoundFile soundFile = splitter.readTargetFile(cueFile, null);
-//            splitter.splitCue(soundFile, cueFile, "c:/temp/", null);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        CueSplitter splitter = new CueSplitter(null);
+        try {
+            CheapSoundFile soundFile = splitter.readTargetFile(cueFile, null);
+            splitter.splitCue(soundFile, cueFile, "c:/temp/", null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
     }

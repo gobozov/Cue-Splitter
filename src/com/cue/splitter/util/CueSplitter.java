@@ -84,6 +84,7 @@ public class CueSplitter {
     }
 
     private void setID3Tags(CheapSoundFile cheapSoundFile, CueFile cueFile, Track t, File targetFile) {
+        if (context == null) return;
         // check id3 tags
         if (!Settings.getBoolean(context, Settings.PREF_USE_ID3_TAGS))
             return;
