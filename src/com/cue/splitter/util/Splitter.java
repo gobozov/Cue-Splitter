@@ -3,11 +3,18 @@ package com.cue.splitter.util;
 import android.os.Message;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.audio.mp3.MP3AudioHeader;
 import org.jaudiotagger.audio.mp3.MP3File;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.id3.ID3v1Tag;
+import org.jaudiotagger.tag.id3.ID3v24Tag;
 
 import java.io.*;
 import java.util.Arrays;
@@ -53,6 +60,7 @@ public class Splitter {
                         byte[] data = readChunk(new File(path), header, startSec * 1000, endSec * 1000);
                         File targetFile = getTrackFile(previousTrack, cueFile, targetDir);
                         writeFile(targetFile, data);
+                        //setID3Tags(cueFile, previousTrack, targetFile);
                     }
                     previousTrack = t;
 
@@ -63,6 +71,7 @@ public class Splitter {
                     byte[] data = readChunk(new File(path), header, startSec * 1000, endSec * 1000);
                     File targetFile = getTrackFile(previousTrack, cueFile, targetDir);
                     writeFile(targetFile, data);
+                   // setID3Tags(cueFile, previousTrack, targetFile);
 
                 }
 
@@ -74,6 +83,41 @@ public class Splitter {
         } catch (ReadOnlyFileException e) {
             e.printStackTrace();
         } catch (InvalidAudioFrameException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    private void setID3Tags(CueFile cueFile, Track t, File targetFile) {
+        try {
+            MP3File mp3 = (MP3File) AudioFileIO.read(targetFile);
+            ID3v1Tag tag = new ID3v1Tag();
+            tag.setField(FieldKey.TRACK, String.valueOf(t.getPosition()));
+            tag.setField(FieldKey.ARTIST, t.getPerformer() == null ? cueFile.getPerformer() : t.getPerformer());
+            tag.setField(FieldKey.TITLE, t.getTitle());
+            tag.setField(FieldKey.ALBUM,cueFile.getTitle());
+
+            ID3v24Tag tag2 = new ID3v24Tag();
+            tag2.setField(FieldKey.TRACK, String.valueOf(t.getPosition()));
+            tag2.setField(FieldKey.ARTIST, t.getPerformer() == null ? cueFile.getPerformer() : t.getPerformer());
+            tag2.setField(FieldKey.TITLE, t.getTitle());
+            tag2.setField(FieldKey.ALBUM,cueFile.getTitle());
+
+            mp3.setID3v1Tag(tag);
+            mp3.setID3v2Tag(tag2);
+            mp3.commit();
+        } catch (CannotReadException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TagException e) {
+            e.printStackTrace();
+        } catch (ReadOnlyFileException e) {
+            e.printStackTrace();
+        } catch (InvalidAudioFrameException e) {
+            e.printStackTrace();
+        } catch (CannotWriteException e) {
             e.printStackTrace();
         }
 
