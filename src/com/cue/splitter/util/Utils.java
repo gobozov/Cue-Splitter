@@ -27,12 +27,9 @@ public class Utils {
         }
     }
 
+
+
     public static void showMessageDialog(Context context, int dialogTitle){
-        showMessageDialog(context, dialogTitle, -1);
-    }
-
-
-    public static void showMessageDialog(Context context, int dialogTitle, int message){
         final AlertDialog alert;
         AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
@@ -42,13 +39,19 @@ public class Utils {
 
                     }
                 });
-                if (message != -1)
-                    builder.setMessage(message);
         alert = builder.create();
         alert.show();
     }
 
-
+    public static void showMediaChooserDialog(Context context, int dialogTitle, DialogInterface.OnClickListener clickListener){
+        final AlertDialog alert;
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(dialogTitle)
+                .setPositiveButton("Select manually", clickListener)
+                .setNegativeButton("Cancel", null);
+        alert = builder.create();
+        alert.show();
+    }
 
 
 }

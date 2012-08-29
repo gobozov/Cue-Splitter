@@ -39,7 +39,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         defaultFolderValue.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                final FileChooserDialog dialog = new FileChooserDialog(SettingsActivity.this);
+                final FileChooserDialog dialog = new FileChooserDialog(SettingsActivity.this, true, null);
                 dialog.setTitle(R.string.pref_default_folder_value);
                 dialog.setiFolderItemListener(new IFolderItemListener() {
                     @Override

@@ -12,8 +12,6 @@ import com.cue.splitter.R;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -27,6 +25,7 @@ public class FolderLayout extends LinearLayout {
     private TextView myPath;
     private ListView lstView;
     private boolean isFolderChooser;
+    private String extension;
     private Typeface font;
     private String currentPath;
 
@@ -41,7 +40,7 @@ public class FolderLayout extends LinearLayout {
         myPath = (TextView) view.findViewById(R.id.path);
         lstView = (ListView) view.findViewById(R.id.list);
 
-        getDir(root, lstView);
+       // getDir(root, lstView);
 
     }
 
@@ -66,7 +65,7 @@ public class FolderLayout extends LinearLayout {
         @Override
         public boolean accept(File file) {
             String fileName = file.getName();
-            if (file.isDirectory() || fileName.endsWith(".cue") || fileName.endsWith(".CUE"))
+            if (file.isDirectory() || fileName.endsWith(extension.toLowerCase()) || fileName.endsWith(extension.toUpperCase()))
                 return true;
             return false;
         }
@@ -103,6 +102,10 @@ public class FolderLayout extends LinearLayout {
         }
         setItemList(items);
 
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     //can manually set Item to display, if u want
@@ -163,6 +166,8 @@ public class FolderLayout extends LinearLayout {
 
             if (text.endsWith(".cue") || text.endsWith(".CUE"))
                 holder.image.setBackgroundResource(R.drawable.ic_cue);
+            else if (extension != null && text.endsWith(extension))
+                holder.image.setBackgroundResource(R.drawable.ic_media);
             else
                 holder.image.setBackgroundResource(R.drawable.ic_folder);
 

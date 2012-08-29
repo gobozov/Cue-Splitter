@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import com.cue.splitter.exception.ReadSoundFileException;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
 import com.cue.splitter.soundfile.CheapMP3;

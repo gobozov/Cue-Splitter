@@ -4,17 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
-import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 import com.cue.splitter.R;
-import com.cue.splitter.util.Settings;
 import com.cue.splitter.util.Utils;
-
-import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,9 +18,13 @@ import java.io.File;
 public class FileChooserDialog extends Dialog {
 
     private IFolderItemListener iFolderItemListener;
+    private String extension;
+    private boolean isFolderChooser;
 
-    public FileChooserDialog(Context context) {
+    public FileChooserDialog(Context context, boolean isFolderChooser, String extension) {
         super(context);
+        this.isFolderChooser = isFolderChooser;
+        this.extension = extension;
     }
 
     @Override
@@ -36,7 +32,8 @@ public class FileChooserDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filechooser);
         FolderLayout folderLayout = (FolderLayout)findViewById(R.id.localfolders);
-        folderLayout.setFolderChooser(true);
+        folderLayout.setExtension(extension);
+        folderLayout.setFolderChooser(isFolderChooser);
         folderLayout.setIFolderItemListener(iFolderItemListener);
         folderLayout.setDir(Utils.isSdAvailable() ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/");
         getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);

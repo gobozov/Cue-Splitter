@@ -74,7 +74,7 @@ public class SplitCueTask extends AsyncTask<Object, Integer, Boolean> {
             splitDialog.dismiss();
           Utils.showMessageDialog(context, R.string.splitting_done);
         if (exception != null)
-            Utils.showMessageDialog(context, R.string.smth_wrong, R.string.cant_write_sound_file);
+            Utils.showMessageDialog(context,  R.string.cant_write_sound_file);
     }
 
     @Override

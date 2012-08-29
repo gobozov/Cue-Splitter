@@ -3,8 +3,6 @@ package com.cue.splitter.util;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Index;
 import com.cue.splitter.data.Track;
-import com.cue.splitter.exception.ReadSoundFileException;
-import com.cue.splitter.soundfile.CheapSoundFile;
 
 import java.io.*;
 import java.util.Arrays;

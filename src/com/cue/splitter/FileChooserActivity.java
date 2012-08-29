@@ -37,6 +37,7 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
 
     private FolderLayout localFolders;
     private boolean isFolderChooser;
+    private String extension;
     private com.actionbarsherlock.view.ActionMode mMode;
 
     @Override
@@ -48,12 +49,18 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         isFolderChooser = getIntent().getExtras().getBoolean("isFolderChooser");
+        extension       = getIntent().getExtras().getString("extension");
+
         getSupportActionBar().setTitle(isFolderChooser ? R.string.select_folder : R.string.menu_select_cue);
+
 
         localFolders = (FolderLayout) findViewById(R.id.localfolders);
         localFolders.setFolderChooser(isFolderChooser);
+        localFolders.setExtension(extension);
         localFolders.setIFolderItemListener(this);
         localFolders.setDir(Utils.isSdAvailable() ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/");
+
+
 
     }
 
@@ -100,18 +107,6 @@ public class FileChooserActivity extends SherlockActivity implements IFolderItem
                     }
                 }).show();
     }
-
-//    @Override
-//    public void OnCannotFileWrite(File file) {
-//        new AlertDialog.Builder(this)
-//                .setIcon(R.drawable.icon)
-//                .setTitle("You can't write to [" + file.getName() + "]!")
-//                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                    }
-//                }).show();
-//    }
 
     //Your stuff here for file Click
     @Override

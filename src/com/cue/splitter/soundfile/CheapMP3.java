@@ -252,8 +252,7 @@ public class CheapMP3 extends CheapSoundFile {
                 // cases we make sure to always double the size at a minimum.
 
                 mAvgBitRate = mBitrateSum / mNumFrames;
-                int totalFramesGuess =
-                    ((mFileSize / mAvgBitRate) * sampleRate) / 144000;
+                int totalFramesGuess = ((mFileSize / mAvgBitRate) * sampleRate) / 144000;
                 int newMaxFrames = totalFramesGuess * 11 / 10;
                 if (newMaxFrames < mMaxFrames * 2)
                     newMaxFrames = mMaxFrames * 2;

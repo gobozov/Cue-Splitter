@@ -17,8 +17,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
-import com.cue.splitter.exception.ReadSoundFileException;
-import com.cue.splitter.soundfile.CheapSoundFile;
 import com.cue.splitter.tasks.ReadFileTask;
 import com.cue.splitter.util.CueParser;
 import com.cue.splitter.util.CueSplitter;
@@ -36,6 +34,7 @@ public class MainActivity extends SherlockActivity {
     private static final String BUNDLE_IS_FOLDER_CHOOSER = "isFolderChooser";
     private static final String BUNDLE_CUE_FILE = "file";
     private static final String BUNDLE_FOLDER = "folder";
+    private static final String BUNDLE_EXTENSION = "extension";
 
 
     private ListView trackList;
@@ -74,6 +73,7 @@ public class MainActivity extends SherlockActivity {
         switch (item.getItemId()) {
             case 1:
                 intent.putExtra(BUNDLE_IS_FOLDER_CHOOSER, false);
+                intent.putExtra(BUNDLE_EXTENSION, ".cue");
                 startActivityForResult(intent, REQUEST_CUE_FILE);
                 break;
             case 2:
