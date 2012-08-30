@@ -14,6 +14,8 @@ public class Track {
     private String performer;
     private Index index;
     private boolean isChecked = true;
+    private int startTime;
+    private int endTime;
 
     public Track() {
     }
@@ -56,6 +58,22 @@ public class Track {
 
     public void setChecked(boolean checked) {
         isChecked = checked;
+    }
+
+    public int getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(int endTime) {
+        this.endTime = endTime;
     }
 
     @Override

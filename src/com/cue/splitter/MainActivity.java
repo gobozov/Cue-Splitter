@@ -1,13 +1,9 @@
 package com.cue.splitter;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +13,9 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
-import com.cue.splitter.tasks.ReadFileTask;
+import com.cue.splitter.tasks.SplitCueTask;
 import com.cue.splitter.util.CueParser;
-import com.cue.splitter.util.CueSplitter;
 import com.cue.splitter.util.Settings;
-import com.cue.splitter.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +77,7 @@ public class MainActivity extends SherlockActivity {
                 }
                 if (Settings.getBoolean(this, Settings.PREF_DEFAULT_FOLDER_ENABLED)) {
                     if (cueFile != null) {
-                        new ReadFileTask(this, cueFile).execute(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE, "/"));
+                        new SplitCueTask(this, cueFile).execute(Settings.getString(this, Settings.PREF_DEFAULT_FOLDER_VALUE, "/"));
                     }
                 } else {
                     intent.putExtra(BUNDLE_IS_FOLDER_CHOOSER, true);
@@ -108,7 +102,7 @@ public class MainActivity extends SherlockActivity {
         if (resultCode == RESULT_OK && requestCode == REQUEST_FOLDER) {
             String target = data.getExtras().getString(BUNDLE_FOLDER);
             if (cueFile != null && target != null) {
-                new ReadFileTask(this, cueFile).execute(target);
+                new SplitCueTask(this, cueFile).execute(target);
             }
         }
     }

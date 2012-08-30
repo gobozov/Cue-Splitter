@@ -3,125 +3,140 @@ package com.cue.splitter.util;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Track;
-import com.cue.splitter.soundfile.CheapMP3;
-import com.cue.splitter.soundfile.CheapSoundFile;
-import com.mpatric.mp3agic.*;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.audio.mp3.MP3AudioHeader;
+import org.jaudiotagger.audio.mp3.MP3File;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.id3.ID3v1Tag;
+import org.jaudiotagger.tag.id3.ID3v24Tag;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 
 /**
  * Created with IntelliJ IDEA.
- * User: gb
- * Date: 08.08.12
- * Time: 18:07
+ * User: GGobozov
+ * Date: 29.08.12
+ * Time: 17:36
  * To change this template use File | Settings | File Templates.
  */
 public class CueSplitter {
     private static final char[] ILLEGAL_NAME_CHARACTERS = {'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'};
     private Context context;
 
+
+    public CueSplitter() {
+    }
+
     public CueSplitter(Context context) {
         this.context = context;
     }
 
-    public CheapSoundFile readTargetFile(CueFile cueFile, final Handler handler) throws IOException {
-        String target = lookupTargetFile(cueFile);
-        CheapSoundFile cheapSoundFile = null;
+    public static void main(String[] args) throws Exception {
+        CueParser parser = new CueParser();
+        CueFile cueFile = null;
+        cueFile = parser.parse(new File("C:\\temp\\01. Sunbird - Emitter (Promo) - 2011.cue"));
 
-        cheapSoundFile = CheapSoundFile.create(target, new CheapSoundFile.ProgressListener() {
-            @Override
-            public boolean reportProgress(double fractionComplete) {
-                if (handler != null) {
-                    Message message = new Message();
-                    message.arg1 = ((int) (fractionComplete * 100));
-                    handler.handleMessage(message);
-                }
-                return true;
-            }
+        CueSplitter cueSplitter = new CueSplitter();
+        cueSplitter.splitCue(cueFile, "c:/temp/", null);
 
-        });
-
-        return cheapSoundFile;
     }
 
-    public boolean splitCue(CheapSoundFile cheapSoundFile, CueFile cueFile, String targetDir, final Handler handler) throws IOException {
-        int count = 0;
+    public boolean splitCue(CueFile cueFile, String targetDir, final Handler handler) throws FileNotFoundException, TagException, IOException, Exception {
+        File file = lookupTargetFile(cueFile);
+
+        MP3File mp3 = new MP3File(file);
+        MP3AudioHeader header = (MP3AudioHeader) mp3.getAudioHeader();
+
+        // set start end time in seconds
         Track previousTrack = null;
-        for (Track t : cueFile.getCheckedTracks()) {
+        for (Track t : cueFile.getTracks()) {
             if (previousTrack != null) {
-
-                int startFrame = secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
-                int endFrame = secondsToFrames(t.getIndex().getPosition().getMinutes() * 60 + t.getIndex().getPosition().getSeconds(), cheapSoundFile);
-                File targetFile = getTrackFile(previousTrack, cueFile, targetDir);
-                cheapSoundFile.WriteFile(targetFile, startFrame, endFrame - startFrame);
-
-                // set ID3 tags
-                setID3Tags(cheapSoundFile, cueFile, previousTrack, targetFile);
-                // handler for progress
-                if (handler != null) {
-                    Message message = new Message();
-                    message.arg1 = ++count;
-                    handler.handleMessage(message);
-                }
+                previousTrack.setStartTime(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds());
+                previousTrack.setEndTime(t.getIndex().getPosition().getMinutes() * 60 + t.getIndex().getPosition().getSeconds());
             }
             previousTrack = t;
         }
-
         if (previousTrack != null) {
-            int startFrame = secondsToFrames(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds(), cheapSoundFile);
-            int endFrame = cheapSoundFile.getNumFrames();
-            File targetFile = getTrackFile(previousTrack, cueFile, targetDir);
-            cheapSoundFile.WriteFile(targetFile, startFrame, endFrame - startFrame);
-            setID3Tags(cheapSoundFile, cueFile, previousTrack, targetFile);
+            previousTrack.setStartTime(previousTrack.getIndex().getPosition().getMinutes() * 60 + previousTrack.getIndex().getPosition().getSeconds());
+            previousTrack.setEndTime(header.getTrackLength());
+        }
 
+        // write files
+        int count = 0;
+        for (Track track : cueFile.getCheckedTracks()) {
+            byte[] data = readChunk(file, header, track.getStartTime() * 1000, track.getEndTime() * 1000);
+            File targetFile = getTrackFile(track, cueFile, targetDir);
+            if (!writeFile(targetFile, data))
+                throw new IOException();
+            try {
+                setID3Tags(cueFile, track, targetFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new TagException();
+            }
+            if (handler != null) {
+                Message message = new Message();
+                message.arg1 = ++count;
+                handler.handleMessage(message);
+            }
         }
         return true;
+
     }
 
-    private void setID3Tags(CheapSoundFile cheapSoundFile, CueFile cueFile, Track t, File targetFile) {
+
+    private void setID3Tags(CueFile cueFile, Track t, File targetFile) throws Exception {
         if (context == null) return;
-        // check id3 tags
         if (!Settings.getBoolean(context, Settings.PREF_USE_ID3_TAGS))
             return;
-        // set ID3 Tags
-        if (cheapSoundFile instanceof CheapMP3) {
-            try {
-                Mp3File mp3file = new Mp3File(targetFile.getAbsolutePath());
-                ID3v1 id3v1Tag = new ID3v1Tag();
-                ID3v2 id3v2Tag = new ID3v23Tag();
+        MP3File mp3 = (MP3File) AudioFileIO.read(targetFile);
+        ID3v1Tag tag = new ID3v1Tag();
+        tag.setField(FieldKey.TRACK, String.valueOf(t.getPosition()));
+        tag.setField(FieldKey.ARTIST, t.getPerformer() == null ? cueFile.getPerformer() : t.getPerformer());
+        tag.setField(FieldKey.TITLE, t.getTitle());
+        tag.setField(FieldKey.ALBUM, cueFile.getTitle());
 
-                mp3file.setId3v1Tag(id3v1Tag);
-                mp3file.setId3v2Tag(id3v2Tag);
+        ID3v24Tag tag2 = new ID3v24Tag();
+        tag2.setField(FieldKey.TRACK, String.valueOf(t.getPosition()));
+        tag2.setField(FieldKey.ARTIST, t.getPerformer() == null ? cueFile.getPerformer() : t.getPerformer());
+        tag2.setField(FieldKey.TITLE, t.getTitle());
+        tag2.setField(FieldKey.ALBUM, cueFile.getTitle());
 
-                id3v1Tag.setTrack(String.valueOf(t.getPosition()));
-                id3v2Tag.setTrack(String.valueOf(t.getPosition()));
+        mp3.setID3v1Tag(tag);
+        mp3.setID3v2Tag(tag2);
+        mp3.commit();
+    }
 
-                id3v1Tag.setArtist(t.getPerformer() == null ? cueFile.getPerformer() : t.getPerformer());
-                id3v2Tag.setArtist(t.getPerformer() == null ? cueFile.getPerformer() : t.getPerformer());
 
-                id3v1Tag.setTitle(t.getTitle());
-                id3v2Tag.setTitle(t.getTitle());
+    private byte[] readChunk(File sourceFile, MP3AudioHeader header, int startTime, int endTime) {
+        byte[] result = null;
+        RandomAccessFile randomAccessFile = null;
+        long mp3StartIndex = header.getMp3StartByte();
+        int trackLengthMs = header.getTrackLength() * 1000;
+        long bitRate = header.getBitRateAsNumber();
+        long beginIndex = bitRate * 1024 / 8 / 1000 * startTime + mp3StartIndex;
+        long endIndex = beginIndex + bitRate * 1024 / 8 / 1000 * (endTime - startTime);
+        if (endTime > trackLengthMs)
+            endIndex = sourceFile.length() - 1;
 
-                id3v1Tag.setAlbum(cueFile.getTitle());
-                id3v2Tag.setAlbum(cueFile.getTitle());
-
-                mp3file.save(targetFile.getAbsolutePath());
-            } catch (UnsupportedTagException e) {
-                e.printStackTrace();
-            } catch (InvalidDataException e) {
-                e.printStackTrace();
-            } catch (NotSupportedException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+        try {
+            randomAccessFile = new RandomAccessFile(sourceFile, "r");
+            randomAccessFile.seek(beginIndex);
+            int size = (int) (endIndex - beginIndex);
+            result = new byte[size];
+            randomAccessFile.read(result);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return result;
     }
 
     private File getTrackFile(Track track, CueFile cueFile, String targetDir) {
@@ -142,23 +157,36 @@ public class CueSplitter {
         return cleanName.toString();
     }
 
-    private String lookupTargetFile(CueFile cueFile) {
-        String file = cueFile.getFile();
-        if (file != null) {
-            file = cueFile.getCueDir() + "/" + file;
-        } else {
-            file = cueFile.getCuePath().replace("cue", cueFile.getExtention());
-        }
+    private File lookupTargetFile(CueFile cueFile) throws FileNotFoundException {
+        String path = cueFile.getFile();
+        if (path != null)
+            path = cueFile.getCueDir() + "/" + path;
+        else
+            path = cueFile.getCuePath().replace("cue", cueFile.getExtention());
+
+        File file = new File(path);
+        if (!file.exists())
+            throw new FileNotFoundException();
         return file;
     }
 
-    public int secondsToFrames(double seconds, CheapSoundFile cheapSoundFile) {
-        int secondsToFrames = (int) (1.0 * seconds * cheapSoundFile.getSampleRate() / cheapSoundFile.getSamplesPerFrame() + 0.5);
-        return secondsToFrames;
+    private boolean writeFile(File file, byte[] data) {
+        BufferedOutputStream bos = null;
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(file));
+            bos.write(data);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
-
-    public int framesToSeconds(CheapSoundFile cheapSoundFile) {
-        return cheapSoundFile.getNumFrames() / 75;
-    }
-
 }

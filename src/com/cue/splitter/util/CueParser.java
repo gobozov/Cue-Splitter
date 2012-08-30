@@ -3,7 +3,6 @@ package com.cue.splitter.util;
 import com.cue.splitter.data.CueFile;
 import com.cue.splitter.data.Index;
 import com.cue.splitter.data.Track;
-import com.cue.splitter.soundfile.CheapSoundFile;
 
 import java.io.*;
 import java.util.Arrays;
@@ -28,7 +27,7 @@ public class CueParser {
 
     public CueFile parse(File file) throws IOException {
         InputStream stream = new FileInputStream(file);
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream, "cp1251"));
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
         CueFile cueFile = new CueFile();
         cueFile.setCuePath(file.getAbsolutePath());
         cueFile.setCueDir(file.getParent());
@@ -102,31 +101,31 @@ public class CueParser {
     }
 
 
-    public static void main(String[] args) throws IOException {
-        CueParser parser = new CueParser();
-        CueFile cueFile = null;
-        cueFile = parser.parse(new File("C:\\temp\\01. Sunbird - Emitter (Promo) - 2011.cue"));
-        // System.out.println("cueFile = " + cueFile);
-        //cueFile = parser.parse(new File("C:\\temp\\VA - Record Трансмиссия Vol 1 - Mixed by DJ Feel.cue"));
-        // System.out.println("cueFile = " + cueFile);
-        // cueFile = parser.parse(new File("C:\\temp\\[VA] Hard Dance Mania Vol 13 Mixed by Pulsedriver.cue"));
-        // System.out.println("cueFile = " + cueFile);
-        //cueFile = parser.parse(new File("C:\\temp\\Various - DJ Anna Lee - 7 Days Of Love.cue"));
-        //System.out.println("cueFile = " + cueFile);
-        // cueFile = parser.parse(new File("C:\\temp\\7Б - Молодые ветра.flac.cue"));
-        //System.out.println("cueFile = " + cueFile);
-
-
-        CueSplitter splitter = new CueSplitter(null);
-        try {
-            CheapSoundFile soundFile = splitter.readTargetFile(cueFile, null);
-            splitter.splitCue(soundFile, cueFile, "c:/temp/", null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-    }
+//    public static void main(String[] args) throws IOException {
+//        CueParser parser = new CueParser();
+//        CueFile cueFile = null;
+//        cueFile = parser.parse(new File("C:\\temp\\01. Sunbird - Emitter (Promo) - 2011.cue"));
+//        // System.out.println("cueFile = " + cueFile);
+//        //cueFile = parser.parse(new File("C:\\temp\\VA - Record Трансмиссия Vol 1 - Mixed by DJ Feel.cue"));
+//        // System.out.println("cueFile = " + cueFile);
+//        // cueFile = parser.parse(new File("C:\\temp\\[VA] Hard Dance Mania Vol 13 Mixed by Pulsedriver.cue"));
+//        // System.out.println("cueFile = " + cueFile);
+//        //cueFile = parser.parse(new File("C:\\temp\\Various - DJ Anna Lee - 7 Days Of Love.cue"));
+//        //System.out.println("cueFile = " + cueFile);
+//        // cueFile = parser.parse(new File("C:\\temp\\7Б - Молодые ветра.flac.cue"));
+//        //System.out.println("cueFile = " + cueFile);
+//
+//
+//        CueSplitter splitter = new CueSplitter(null);
+//        try {
+//            CheapSoundFile soundFile = splitter.readTargetFile(cueFile, null);
+//            splitter.splitCue(soundFile, cueFile, "c:/temp/", null);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
 
 }
