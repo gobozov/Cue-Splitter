@@ -167,7 +167,7 @@ public class FolderLayout extends LinearLayout {
             if (text.endsWith(".cue") || text.endsWith(".CUE"))
                 holder.image.setBackgroundResource(R.drawable.ic_cue);
             else if (extension != null && text.endsWith(extension))
-                holder.image.setBackgroundResource(R.drawable.ic_media);
+                holder.image.setBackgroundResource(R.drawable.ic_audio);
             else
                 holder.image.setBackgroundResource(R.drawable.ic_folder);
 
